@@ -18,13 +18,15 @@ public class Destination {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long destinationId;
     private String destinationName;
+    private String destinationAddress;
     private float destinationLatitude;
     private float destinationLongitude;
     private String destinationDescription;
-    public Destination(String destinationName, float destinationLatitude, float destinationLongitude, String destinationDescription){
+    public Destination(String destinationName, String destinationAddress, float destinationLatitude, float destinationLongitude, String destinationDescription){
         this.destinationName=destinationName;
         this.destinationDescription=destinationDescription;
         this.destinationLatitude=destinationLatitude;
+        this.destinationAddress=destinationAddress;
         this.destinationLongitude=destinationLongitude;
 
 

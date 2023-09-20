@@ -18,14 +18,17 @@ public class Bank {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bankId;
     private String bankNamebranchName;
+    private String bankAddress;
+
     private float branchLatitude;
     private float branchLongitude;
     private String bankDescription;
-    public Bank(String bankNamebranchName, String bankDescription, float branchLatitude, float branchLongitude){
+    public Bank(String bankNamebranchName, String bankAddress ,String bankDescription, float branchLatitude, float branchLongitude){
         this.bankNamebranchName=bankNamebranchName;
         this.bankDescription=bankDescription;
         this.branchLatitude=branchLatitude;
         this.branchLongitude=branchLongitude;
+        this.bankAddress=bankAddress;
 
 
     }

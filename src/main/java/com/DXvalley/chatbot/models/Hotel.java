@@ -20,9 +20,11 @@ public class Hotel {
     private String hotelName;
     private float hotelLatitude;
     private float hotelLongitude;
+    private String hotelAddress;
     private String hotelDescription;
-    public Hotel(String hotelName, String hotelDescription, float hotelLatitude, float hotelLongitude){
+    public Hotel(String hotelName, String hotelAddress ,String hotelDescription, float hotelLatitude, float hotelLongitude){
         this.hotelName=hotelName;
+        this.hotelAddress=hotelAddress;
         this.hotelDescription=hotelDescription;
         this.hotelLongitude=hotelLongitude;
         this.hotelLatitude=hotelLatitude;

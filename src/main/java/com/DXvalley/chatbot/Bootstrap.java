@@ -21,6 +21,7 @@ public class Bootstrap {
     Role sysAdmin = new Role("System Admin", "Highest Level System Administrator");
     Role marketAnalyst = new Role("Market Analyst", "Works on analysis of market");
     Role Employee = new Role("employee", "officer");
+    Role TourOperator = new Role("Tour Operator", "Create Package");
     Office adminOffice = new Office("Around Bole", "Visit Oromia Info Centre", 38.78404357187282F, 8.990634168076502F,"Head Office");
     Address address = new Address("ethiopia", "Addis Ababa", "Bole Noh Real State", "03", "457");
     Users user = new Users("@mesay", "@mesay123", "Mesay Kebede Lemma", "fikirawaldi7@gmail.com", true, "MALE", "1997-11-27", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU", "https://pbs.twimg.com/media/FmQODdMXEAEvUao?format=jpg&name=large", "194.12.1.200", "2023-31-08", null, 1, 0, false, true);
@@ -42,6 +43,7 @@ public class Bootstrap {
             log.info("Preloading " + roleRepository.save(Employee));
             log.info("Preloading " + roleRepository.save(admin));
             log.info("Preloading " + userRepository.save(user));
+            log.info("preloading"+roleRepository.save(TourOperator));
         };
     }
 }
