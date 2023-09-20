@@ -1,7 +1,6 @@
 package com.DXvalley.chatbot.controllers;
 import com.DXvalley.chatbot.models.Feedback;
 import com.DXvalley.chatbot.repository.FeedbackRepository;
-import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.FeedbackService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,8 +22,6 @@ import java.util.List;
 public class FeedBackController {
     @Autowired
     private FeedbackService feedbackService;
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private FeedbackRepository feedbackRepository;
