@@ -1,0 +1,52 @@
+package com.DXvalley.chatbot.models;
+import jakarta.persistence.*;
+import java.util.ArrayList;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.util.Collection;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+public class Tourist {
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Long touristId;
+    private String fullName;
+    private String country;
+    private String city;
+    private String subCity;
+    private String gender;
+    private String touristType;
+    private String birthDate;
+    private String email;
+    private String phoneNum;
+    private String durationOfStay;
+    private String passportId;
+    private String zipcode;
+    private String  visitedAt;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Destination> destinations = new ArrayList<>();
+    public Tourist(String fullName,  String touristType  ,String country, String city,  String subCity, String gender, String birthDate, String email,
+                   String phoneNum, String durationOfStay, String passportId, String zipcode, String visitedAt){
+        this.fullName=fullName;
+        this.country=country;
+        this.city=city;
+        this.subCity=subCity;
+        this.gender=gender;
+        this.touristType=touristType;
+        this.birthDate=birthDate;
+        this.email=email;
+        this.phoneNum= phoneNum;
+        this.durationOfStay= durationOfStay;
+        this.passportId=passportId;
+        this.zipcode=zipcode;
+        this.visitedAt= visitedAt;
+    }
+
+
+}
