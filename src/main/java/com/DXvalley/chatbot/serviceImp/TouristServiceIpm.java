@@ -4,6 +4,8 @@ import com.DXvalley.chatbot.repository.TouristRepository;
 import com.DXvalley.chatbot.service.TouristService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
+
 @Service
 public class TouristServiceIpm implements TouristService {
     @Autowired
@@ -12,4 +14,11 @@ public class TouristServiceIpm implements TouristService {
     public void registerTourist(Tourist tourist) {
         touristRepository.save(tourist);
     }
+
+    @Override
+    public Tourist editTourist(Tourist tourist) {
+        return this.touristRepository.save(tourist);
+    }
+    @Override
+    public List<Tourist> fetchTourists() { return touristRepository.findAll();}
 }

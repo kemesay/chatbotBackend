@@ -19,9 +19,6 @@ public class BankServiceImp implements BankService {
     public Bank editBank(Bank bank) {
         return this.bankRepository.save(bank);
     }
-
-
-
     @Override
     public List<Bank> fetchBanks() { return bankRepository.findAll();}
 

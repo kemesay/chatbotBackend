@@ -8,10 +8,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/destination")
 public class DestinationController {
@@ -32,6 +32,40 @@ public class DestinationController {
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/getDestinations")
+    private ResponseEntity<?> fetchDestinations(){
+        List<Destination> destinations=destinationService.fetchDestinations();
+        return new ResponseEntity<>(destinations,HttpStatus.OK);
+//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
+    }
+    @GetMapping("/getDestination/{destinationId}")
+    public ResponseEntity<?> getByDestinationId(@PathVariable Long destinationId) {
+        var destination = destinationRepository.findByDestinationId(destinationId);
+        if (destination == null) {
+            createUserResponse response = new createUserResponse("error", "Cannot find this destination!");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(destination, HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/{destinationId}")
+    Destination editDestination(@RequestBody Destination destination, @PathVariable Long destinationId) {
+        Destination destination1 = this.destinationRepository.findByDestinationId(destinationId);
+        destination1.setDestinationName(destination.getDestinationName());
+        destination1.setDestinationAddress(destination.getDestinationAddress());
+        destination1.setDestinationDescription(destination.getDestinationDescription());
+        destination1.setDestinationLatitude(destination.getDestinationLatitude());
+        destination1.setDestinationLongitude(destination.getDestinationLongitude());
+        return destinationService.editDestination(destination1);
+    }
+
+    @DeleteMapping("/delete/destination/{destinationId}")
+    void deleteDestination(@PathVariable Long destinationId) {
+        this.destinationRepository.deleteById(destinationId);
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor

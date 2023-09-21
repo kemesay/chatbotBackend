@@ -9,7 +9,6 @@ public interface BankService {
     List<Bank> fetchBanks();
     Bank editBank (Bank bank);
 
-//    Bank getBankById(Long bankId);
 
     void registerBank(Bank bank);
 

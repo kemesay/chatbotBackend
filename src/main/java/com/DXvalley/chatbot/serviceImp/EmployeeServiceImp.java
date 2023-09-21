@@ -6,6 +6,8 @@ import com.DXvalley.chatbot.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeServiceImp implements EmployeeService {
     @Autowired
@@ -14,4 +16,10 @@ public class EmployeeServiceImp implements EmployeeService {
     public void registerEmployee(Employee employee) {
         employeeRepository.save(employee);
     }
+    @Override
+    public Employee editEmployee(Employee employee) {
+        return this.employeeRepository.save(employee);
+    }
+    @Override
+    public List<Employee> fetchEmployee() { return employeeRepository.findAll();}
 }

@@ -52,10 +52,7 @@ public class BankController {
 
         return new ResponseEntity<>(bank, HttpStatus.OK);
     }
-//    @GetMapping("/getBank")
-//    List<Bank> getBank() {
-//        return this.bankService.fetchBanks();
-//    }
+
     @PutMapping("/edit/{bankId}")
     Bank editBank(@RequestBody Bank bank, @PathVariable Long bankId) {
         Bank bank1 = this.bankRepository.findByBankId(bankId);
