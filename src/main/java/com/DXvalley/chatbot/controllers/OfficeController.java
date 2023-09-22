@@ -8,10 +8,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/office")
 public class OfficeController {
@@ -31,6 +31,35 @@ public class OfficeController {
             responseMessage = new OfficeController.ResponseMessage("fail", "Office already exist");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("/getOffices")
+    private ResponseEntity<?> fetchOffices(){
+        List<Office> office=officeService.fetchOffices();
+        return new ResponseEntity<>(office,HttpStatus.OK);
+//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
+    }
+    @GetMapping("/getOffice/{officeId}")
+    public ResponseEntity<?> getByOfficeId(@PathVariable Long officeId) {
+        var office = officeRepository.findByOfficeId(officeId);
+        if (office == null) {
+            createUserResponse response = new createUserResponse("error", "Cannot find this office!");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(office, HttpStatus.OK);
+    }
+    @PutMapping("/edit/{officeId}")
+    Office e(@RequestBody Office office, @PathVariable Long officeId) {
+        Office office1 = this.officeRepository.findByOfficeId(officeId);
+        office1.setOfficeName(office.getOfficeName());
+        office1.setOfficeAddress(office.getOfficeAddress());
+        office1.setOfficeLatitude(office.getOfficeLatitude());
+        office1.setOfficeLongitude(office.getOfficeLongitude());
+        office1.setDescription(office.getDescription());
+        return officeService.editOffice(office1);
+    }
+    @DeleteMapping("/delete/office/{officeId}")
+    void deleteOffice(@PathVariable Long officeId) {
+        this.officeRepository.deleteById(officeId);
     }
     @Getter
     @Setter

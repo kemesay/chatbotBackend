@@ -49,7 +49,6 @@ public class EmployeeController {
             createUserResponse response = new createUserResponse("error", "Cannot find this employee!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
@@ -63,6 +62,9 @@ public class EmployeeController {
         employee1.setOffice(employee.getOffice());
         employee1.setIsActive(employee.getIsActive());
         employee1.setPhoneNum(employee.getPhoneNum());
+        employee1.setGender(employee.getGender());
+        employee1.setAddress(employee.getAddress());
+        employee1.setBirthDate(employee.getBirthDate());
 
         return employeeService.editEmployee(employee1);
     }

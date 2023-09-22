@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,7 +22,11 @@ public class Employee {
     private String lastName;
     private String email;
     private String phoneNum;
+    private String Address;
+    private String gender;
+    private String birthDate;
     private Boolean isActive;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Office> office = new ArrayList<>();

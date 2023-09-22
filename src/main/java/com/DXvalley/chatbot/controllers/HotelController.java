@@ -1,4 +1,5 @@
 package com.DXvalley.chatbot.controllers;
+import com.DXvalley.chatbot.models.Bank;
 import com.DXvalley.chatbot.models.Hotel;
 import com.DXvalley.chatbot.repository.HotelRepository;
 import com.DXvalley.chatbot.service.HotelService;
@@ -8,10 +9,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/hotel")
 public class HotelController {
@@ -32,6 +33,38 @@ public class HotelController {
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/getHotels")
+    private ResponseEntity<?> fetchHotels(){
+        List<Hotel> hotel=hotelService.fetchHotels();
+        return new ResponseEntity<>(hotel,HttpStatus.OK);
+//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
+    }
+    @GetMapping("/getHotel/{hotelId}")
+    public ResponseEntity<?> getByHotelId(@PathVariable Long hotelId) {
+        var hotel = hotelRepository.findByHotelId(hotelId);
+        if (hotel == null) {
+            createUserResponse response = new createUserResponse("error", "Cannot find this hotel!");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(hotel, HttpStatus.OK);
+    }
+
+    @PutMapping("/edit/{hotelId}")
+    Hotel editHotel(@RequestBody Hotel hotel, @PathVariable Long hotelId) {
+        Hotel hotel1 = this.hotelRepository.findByHotelId(hotelId);
+        hotel1.setHotelName(hotel.getHotelName());
+        hotel1.setHotelAddress(hotel.getHotelAddress());
+        hotel1.setHotelDescription(hotel.getHotelDescription());
+        hotel1.setHotelLatitude(hotel.getHotelLatitude());
+        hotel1.setHotelLongitude(hotel.getHotelLongitude());
+        return hotelService.editHotel(hotel1);
+    }
+
+    @DeleteMapping("/delete/hotel/{hotelId}")
+    void deleteHotel(@PathVariable Long hotelId) {
+        this.hotelRepository.deleteById(hotelId);
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor
