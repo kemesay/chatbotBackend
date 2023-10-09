@@ -21,6 +21,8 @@ public class TourPackage {
     private String stayDuration;
     private String packagePricePerPerson;
     private String maxGroup;
+
+    private  List<String> touristType;
     private List<String> packageForDorInter;
     private String packageDescription;
     private String departureDates;
@@ -31,7 +33,7 @@ public class TourPackage {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<TourOpertaor> tourOpertaor = new ArrayList<>();
 
-    public TourPackage(String maxGroup, List<String> packageForDorInter, String packageDescription  ,String departureDates,  String createdAt,
+    public TourPackage(String maxGroup, List<String> packageForDorInter,List<String> touristType, String packageDescription  ,String departureDates,  String createdAt,
                         String packagePricePerPerson, String stayDuration,  String packageName){
         this.packageName=packageName;
         this.stayDuration=stayDuration;
@@ -40,6 +42,7 @@ public class TourPackage {
         this.packageDescription=packageDescription;
         this.departureDates=departureDates;
         this.createdAt= createdAt;
+        this.touristType= touristType;
         this.packageForDorInter = packageForDorInter;
     }
 

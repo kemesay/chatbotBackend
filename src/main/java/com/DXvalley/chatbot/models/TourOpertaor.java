@@ -23,13 +23,13 @@ public class TourOpertaor {
     private String email;
     private String phoneNum;
     private List<String> tourCategory;
-    private  String touristType;
+    private  List<String> touristType;
     private String foundAt;
     private  String tinNum;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Destination> destinations = new ArrayList<>();
-    public TourOpertaor(String tourOrgName, String touristType, String ownerFullName  ,String ownerAddress,  String email,
+    public TourOpertaor(String tourOrgName, List<String> touristType, String ownerFullName  ,String ownerAddress,  String email,
                                  String phoneNum, String foundAt,  List<String> tourCategory, String tinNum){
         this.tourOrgName=tourOrgName;
         this.ownerFullName=ownerFullName;
