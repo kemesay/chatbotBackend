@@ -31,8 +31,10 @@ public class tourOpController {
         if (tourOp1==null) {
             Date date = new Date();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            tourOp1.setFoundAt(dateFormat.format(date));
+            tourOpertaor.setFoundAt(dateFormat.format(date));
             tourOpService.registerTourOrg(tourOpertaor);
+
+
             responseMessage = new tourOpController.ResponseMessage("success", "TourOperator Registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }else {

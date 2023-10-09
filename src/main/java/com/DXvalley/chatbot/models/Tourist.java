@@ -1,6 +1,8 @@
 package com.DXvalley.chatbot.models;
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +24,7 @@ public class Tourist {
     private String subCity;
     private String gender;
     private String touristType;
+    private  List<String> tourCategory;
     private String birthDate;
     private String email;
     private String phoneNum;
@@ -31,7 +34,7 @@ public class Tourist {
     private String  visitedAt;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Destination> destinations = new ArrayList<>();
-    public Tourist(String fullName,  String touristType  ,String country, String city,  String subCity, String gender, String birthDate, String email,
+    public Tourist(String fullName, List<String> tourCategory, String touristType  ,String country, String city,  String subCity, String gender, String birthDate, String email,
                    String phoneNum, String durationOfStay, String passportId, String zipcode, String visitedAt){
         this.fullName=fullName;
         this.country=country;
@@ -39,6 +42,7 @@ public class Tourist {
         this.subCity=subCity;
         this.gender=gender;
         this.touristType=touristType;
+        this.tourCategory=tourCategory;
         this.birthDate=birthDate;
         this.email=email;
         this.phoneNum= phoneNum;

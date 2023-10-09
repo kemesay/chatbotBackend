@@ -23,6 +23,7 @@ public class Users {
     private Long userId;
     private String username;
     private String password;
+    private String phoneNum;
     private String fullName;
     private String email;
     private Boolean emailConfirmed;
@@ -46,12 +47,13 @@ public class Users {
     //user roles
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
-    public Users(String username, String password, String fullName, String email, Boolean emailConfirmed,String gender,String birthDate,String imageUrl,String coverImgUrl,String ip,String createdAt,
+    public Users(String username, String phoneNum, String password, String fullName, String email, Boolean emailConfirmed,String gender,String birthDate,String imageUrl,String coverImgUrl,String ip,String createdAt,
                  String deletedAt,Integer languageCode,  Integer accessFailedCount,  Boolean twoFactorEnabled,Boolean isEnabled) {
         this.username = username;
         this.password = new BCryptPasswordEncoder(). encode(password);
         this.fullName = fullName;
         this.email= email;
+        this.phoneNum=phoneNum;
         this.emailConfirmed= emailConfirmed;
         this.gender=gender;
         this.birthDate=birthDate;
