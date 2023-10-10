@@ -34,7 +34,7 @@ public class PackageController {
         if (package1==null) {
             Date date = new Date();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            package1.setCreatedAt(dateFormat.format(date));
+            tourPackage.setCreatedAt(dateFormat.format(date));
             tourPackageService.registerPackage(tourPackage);
             responseMessage = new tourOpController.ResponseMessage("success", "Package Registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);

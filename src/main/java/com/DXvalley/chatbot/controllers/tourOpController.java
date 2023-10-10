@@ -34,7 +34,6 @@ public class tourOpController {
             tourOpertaor.setFoundAt(dateFormat.format(date));
             tourOpService.registerTourOrg(tourOpertaor);
 
-
             responseMessage = new tourOpController.ResponseMessage("success", "TourOperator Registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }else {
@@ -72,7 +71,7 @@ public class tourOpController {
 
         return tourOpService.editTourOp(tourOpertaor1);
     }
-    @DeleteMapping("/delete/tourist/{touristId}")
+    @DeleteMapping("/delete/tourOperator/{tourOperatorId}")
     void deleteTourOp(@PathVariable Long tourOperatorId) {
         this.tourOPRRepository.deleteById(tourOperatorId);
     }

@@ -21,13 +21,11 @@ public class TourPackage {
     private String stayDuration;
     private String packagePricePerPerson;
     private String maxGroup;
-
     private  List<String> touristType;
     private List<String> packageForDorInter;
     private String packageDescription;
     private String departureDates;
     private String createdAt;
-
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Destination> destinations = new ArrayList<>();
     @ManyToMany(fetch = FetchType.EAGER)

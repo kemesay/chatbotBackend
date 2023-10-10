@@ -30,7 +30,7 @@ public class TourOpertaor {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Destination> destinations = new ArrayList<>();
     public TourOpertaor(String tourOrgName, List<String> touristType, String ownerFullName  ,String ownerAddress,  String email,
-                                 String phoneNum, String foundAt,  List<String> tourCategory, String tinNum){
+                                                     String phoneNum, String foundAt,  List<String> tourCategory, String tinNum){
         this.tourOrgName=tourOrgName;
         this.ownerFullName=ownerFullName;
         this.ownerAddress=ownerAddress;
