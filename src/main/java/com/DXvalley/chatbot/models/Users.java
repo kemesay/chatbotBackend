@@ -69,8 +69,5 @@ public class Users {
         //this.verificationCode=verificationCode;
         // this.verificationCodeCreatedAt=verificationCodeCreatedAt;
     }
-    public Users orElseThrow(Object object) {
-        return null;
-    }
 
 }
