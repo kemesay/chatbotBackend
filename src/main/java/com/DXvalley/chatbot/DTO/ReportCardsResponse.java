@@ -13,4 +13,5 @@ public class ReportCardsResponse {
     private SingleReportCardData packages;
     private SingleReportCardData destinations;
     private SingleReportCardData tourOperators;
+    private SingleReportCardData employee;
 }

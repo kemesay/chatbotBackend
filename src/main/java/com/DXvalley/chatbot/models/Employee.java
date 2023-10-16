@@ -22,7 +22,7 @@ public class Employee {
     private String lastName;
     private String email;
     private String phoneNum;
-    private String Address;
+    private String address;
     private String gender;
     private String birthDate;
     private Boolean isActive;

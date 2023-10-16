@@ -2,9 +2,7 @@ package com.DXvalley.chatbot.security;
 import com.DXvalley.chatbot.security.CustomUserDeatailsService;
 import com.DXvalley.chatbot.security.filters.JwtAuthenticationFilter;
 import com.DXvalley.chatbot.security.filters.JwtAuthorizationFilter;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
