@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 public interface DestinationRepository extends JpaRepository<Destination,Long> {
-    Destination findByDestinationName(String destinationName);
+    Destination findByName(String Name);
     Destination findByDestinationId(Long destinationId);
 
 }

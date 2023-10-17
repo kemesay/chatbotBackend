@@ -17,18 +17,17 @@ public class Bank {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bankId;
-    private String bankNamebranchName;
-    private String bankAddress;
-
-    private float branchLatitude;
-    private float branchLongitude;
-    private String bankDescription;
-    public Bank(String bankNamebranchName, String bankAddress ,String bankDescription, float branchLatitude, float branchLongitude){
-        this.bankNamebranchName=bankNamebranchName;
-        this.bankDescription=bankDescription;
-        this.branchLatitude=branchLatitude;
-        this.branchLongitude=branchLongitude;
-        this.bankAddress=bankAddress;
+    private String name;
+    private String address;
+    private float latitude;
+    private float longitude;
+    private String description;
+    public Bank(String name, String address ,String description, float latitude, float longitude){
+        this.name=name;
+        this.longitude=longitude;
+        this.description=description;
+        this.latitude=latitude;
+        this.address=address;
 
 
     }

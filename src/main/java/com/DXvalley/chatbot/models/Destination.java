@@ -17,18 +17,17 @@ public class Destination {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long destinationId;
-    private String destinationName;
-    private String destinationAddress;
-    private float destinationLatitude;
-    private float destinationLongitude;
-    private String destinationDescription;
-    public Destination(String destinationName, String destinationAddress, float destinationLatitude, float destinationLongitude, String destinationDescription){
-        this.destinationName=destinationName;
-        this.destinationDescription=destinationDescription;
-        this.destinationLatitude=destinationLatitude;
-        this.destinationAddress=destinationAddress;
-        this.destinationLongitude=destinationLongitude;
-
+    private String name;
+    private String address;
+    private float latitude;
+    private float longitude;
+    private String description;
+    public Destination(String name, String address, float latitude, float longitude, String description){
+        this.name=name;
+        this.description=description;
+        this.latitude=latitude;
+        this.longitude=longitude;
+        this.address=address;
 
     }
 

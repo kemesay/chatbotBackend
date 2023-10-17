@@ -22,7 +22,7 @@ public class HotelController {
     private HotelRepository hotelRepository;
     @PostMapping("/registerHotel")
     public ResponseEntity<?> createHotel(@RequestBody Hotel hotel) {
-        Hotel hotel1=hotelRepository.findByHotelName(hotel.getHotelName());
+        Hotel hotel1=hotelRepository.findByName(hotel.getName());
         HotelController.ResponseMessage responseMessage;
         if (hotel1==null) {
             hotelService.registerHotel(hotel);
@@ -52,11 +52,11 @@ public class HotelController {
     @PutMapping("/edit/{hotelId}")
     Hotel editHotel(@RequestBody Hotel hotel, @PathVariable Long hotelId) {
         Hotel hotel1 = this.hotelRepository.findByHotelId(hotelId);
-        hotel1.setHotelName(hotel.getHotelName());
-        hotel1.setHotelAddress(hotel.getHotelAddress());
-        hotel1.setHotelDescription(hotel.getHotelDescription());
-        hotel1.setHotelLatitude(hotel.getHotelLatitude());
-        hotel1.setHotelLongitude(hotel.getHotelLongitude());
+        hotel1.setName(hotel.getName());
+        hotel1.setAddress(hotel.getAddress());
+        hotel1.setDescription(hotel.getDescription());
+        hotel1.setLatitude(hotel.getLatitude());
+        hotel1.setLongitude(hotel.getLongitude());
         return hotelService.editHotel(hotel1);
     }
 

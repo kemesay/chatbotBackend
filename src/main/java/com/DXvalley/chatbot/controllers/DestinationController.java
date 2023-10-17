@@ -21,7 +21,7 @@ public class DestinationController {
     private DestinationRepository destinationRepository;
     @PostMapping("/registerDestination")
     public ResponseEntity<?> createDestination(@RequestBody Destination destination) {
-        Destination destination1=destinationRepository.findByDestinationName(destination.getDestinationName());
+        Destination destination1=destinationRepository.findByName(destination.getName());
         DestinationController.ResponseMessage responseMessage;
         if (destination1==null) {
             destinationService.registerDestination(destination);
@@ -53,11 +53,11 @@ public class DestinationController {
     @PutMapping("/edit/{destinationId}")
     Destination editDestination(@RequestBody Destination destination, @PathVariable Long destinationId) {
         Destination destination1 = this.destinationRepository.findByDestinationId(destinationId);
-        destination1.setDestinationName(destination.getDestinationName());
-        destination1.setDestinationAddress(destination.getDestinationAddress());
-        destination1.setDestinationDescription(destination.getDestinationDescription());
-        destination1.setDestinationLatitude(destination.getDestinationLatitude());
-        destination1.setDestinationLongitude(destination.getDestinationLongitude());
+        destination1.setName(destination.getName());
+        destination1.setAddress(destination.getAddress());
+        destination1.setDescription(destination.getDescription());
+        destination1.setLatitude(destination.getLatitude());
+        destination1.setLongitude(destination.getLongitude());
         return destinationService.editDestination(destination1);
     }
 

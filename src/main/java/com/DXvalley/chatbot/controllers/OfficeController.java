@@ -21,7 +21,7 @@ public class OfficeController {
     private OfficeRepository officeRepository;
     @PostMapping("/registerOffice")
     public ResponseEntity<?> createOffice(@RequestBody Office office) {
-        Office office1=officeRepository.findByOfficeName(office.getOfficeName());
+        Office office1=officeRepository.findByName(office.getName());
         OfficeController.ResponseMessage responseMessage;
         if (office1==null) {
             officeService.registerOffice(office);
@@ -50,10 +50,10 @@ public class OfficeController {
     @PutMapping("/edit/{officeId}")
     Office e(@RequestBody Office office, @PathVariable Long officeId) {
         Office office1 = this.officeRepository.findByOfficeId(officeId);
-        office1.setOfficeName(office.getOfficeName());
-        office1.setOfficeAddress(office.getOfficeAddress());
-        office1.setOfficeLatitude(office.getOfficeLatitude());
-        office1.setOfficeLongitude(office.getOfficeLongitude());
+        office1.setName(office.getName());
+        office1.setAddress(office.getAddress());
+        office1.setLatitude(office.getLatitude());
+        office1.setLongitude(office.getLongitude());
         office1.setDescription(office.getDescription());
         return officeService.editOffice(office1);
     }

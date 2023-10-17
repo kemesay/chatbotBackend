@@ -25,7 +25,7 @@ public class BankController {
     private BankRepository bankRepository;
     @PostMapping("/registerBank")
     public ResponseEntity<?> createBank(@RequestBody Bank bank) {
-        Bank bank1=bankRepository.findByBankNamebranchName(bank.getBankNamebranchName());
+        Bank bank1=bankRepository.findByName(bank.getName());
         BankController.ResponseMessage responseMessage;
         if (bank1==null) {
             bankService.registerBank(bank);
@@ -56,11 +56,11 @@ public class BankController {
     @PutMapping("/edit/{bankId}")
     Bank editBank(@RequestBody Bank bank, @PathVariable Long bankId) {
         Bank bank1 = this.bankRepository.findByBankId(bankId);
-        bank1.setBankNamebranchName(bank.getBankNamebranchName());
-        bank1.setBankAddress(bank.getBankAddress());
-        bank1.setBankDescription(bank.getBankDescription());
-        bank1.setBranchLatitude(bank.getBranchLatitude());
-        bank1.setBranchLongitude(bank.getBranchLongitude());
+        bank1.setName(bank.getName());
+        bank1.setAddress(bank.getAddress());
+        bank1.setDescription(bank.getDescription());
+        bank1.setLatitude(bank.getLatitude());
+        bank1.setLongitude(bank.getLongitude());
         return bankService.editBank(bank1);
     }
 

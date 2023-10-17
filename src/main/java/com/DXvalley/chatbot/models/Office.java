@@ -17,17 +17,17 @@ public class Office {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long officeId;
-    private String officeAddress;
-    private float officeLatitude;
-    private String officeName;
-    private float officeLongitude;
+    private String address;
+    private float latitude;
+    private String name;
+    private float longitude;
     private String description;
-    public Office(String officeAddress, String description, float officeLongitude,  float officeLatitude, String officeName){
-        this.officeAddress=officeAddress;
+    public Office(String address, String description, float longitude,  float latitude, String name){
+        this.address=address;
         this.description=description;
-        this.officeName= officeName;
-        this.officeLatitude= officeLatitude;
-        this.officeLongitude=officeLongitude;
+        this.name= name;
+        this.latitude= latitude;
+        this.longitude=longitude;
 
     }
 

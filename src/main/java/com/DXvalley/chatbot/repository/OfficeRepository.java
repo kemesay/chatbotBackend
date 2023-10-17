@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 public interface OfficeRepository extends JpaRepository<Office,Long> {
-    Office findByOfficeName(String officeName);
+    Office findByName(String Name);
     Office findByOfficeId(Long officeId);
 
 
