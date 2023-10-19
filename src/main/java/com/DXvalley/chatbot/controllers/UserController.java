@@ -1,5 +1,6 @@
 package com.DXvalley.chatbot.controllers;
 
+import com.DXvalley.chatbot.models.Role;
 import com.DXvalley.chatbot.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -244,24 +245,45 @@ public class UserController {
 
     @PutMapping("/edit/{userId}")
     Users editUser(@RequestBody Users users, @PathVariable Long userId) {
-        Users users1 = this.userRepository.findByUserId(userId);
-        users1.setUsername(users.getUsername());
-        users1.setPassword(users.getPassword());
-        users1.setFullName(users.getFullName());
-        users1.setEmail(users.getEmail());
-        users1.setGender(users.getGender());
-        users1.setTwoFactorEnabled(users.getTwoFactorEnabled());
-        users1.setIsEnabled(users.getIsEnabled());
-        users1.setPhoneNum(users.getPhoneNum());
-        users1.setBirthDate(users.getBirthDate());
-        users1.setTwoFactorEnabled(users.getTwoFactorEnabled());
-        users1.setRoles(users.getRoles());
-        users1.setAddress(users.getAddress());
+        Users existingUser = this.userRepository.findByUserId(userId);
 
-        return userService.editUser(users1);
+        if (existingUser != null) {
+            // Update the fields of the existing user
+            existingUser.setUsername(users.getUsername());
+            existingUser.setPassword(users.getPassword());
+            existingUser.setFullName(users.getFullName());
+            existingUser.setEmail(users.getEmail());
+            existingUser.setGender(users.getGender());
+            existingUser.setTwoFactorEnabled(users.getTwoFactorEnabled());
+            existingUser.setIsEnabled(users.getIsEnabled());
+            existingUser.setPhoneNum(users.getPhoneNum());
+            existingUser.setBirthDate(users.getBirthDate());
+
+            // Update the address
+            existingUser.setAddress(users.getAddress());
+
+            // Clear the existing roles and add the new ones
+            existingUser.getRoles().clear();
+
+            for (Role role : users.getRoles()) {
+                // Check if the role is new and unsaved using roleName
+                Role existingRole = roleRepo.findByRoleName(role.getRoleName());
+                if (existingRole == null) {
+                    // Save the new Role before adding it
+                    existingRole = roleRepo.save(role);
+                }
+                existingUser.getRoles().add(existingRole);
+            }
+
+            // Save the updated user
+            return userRepository.save(existingUser);
+        } else {
+            // Handle the case when the user is not found
+            // You can return an error response or throw an exception
+            // depending on your application's requirements.
+            return null; // or throw an exception
+        }
     }
-
-
 
 
     @DeleteMapping("/delete/user/{userId}")
