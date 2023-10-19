@@ -14,7 +14,6 @@ import com.DXvalley.chatbot.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-
 @Service @RequiredArgsConstructor
 public class CustomUserDeatailsService implements UserDetailsService {
     private final UserRepository userRepository;
@@ -22,7 +21,12 @@ public class CustomUserDeatailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         Users user = userRepository.findByEmailOrUsername(usernameOrEmail, usernameOrEmail);
         if (user != null) {
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+            Collection<SimpleGrantedAuthority> authorities;
+            if (user.getIsEnabled() == null || !user.getIsEnabled())
+//                throw new RuntimeException("Something");
+            {
+            }authorities = new ArrayList<>();
             user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleName())));
             return new org.springframework.security.core.userdetails.User(
                     user.getUsername(), user.getPassword(), authorities

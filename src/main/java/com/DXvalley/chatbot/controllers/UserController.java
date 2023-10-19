@@ -1,5 +1,6 @@
 package com.DXvalley.chatbot.controllers;
 
+import com.DXvalley.chatbot.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.nio.file.AccessDeniedException;
@@ -41,6 +42,8 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private final FileUploadService fileUploadService;
+    @Autowired
+    private UserService userService;
     @Autowired
     EmailService emailService;
 
@@ -238,6 +241,28 @@ public class UserController {
         } else
             throw new AccessDeniedException("403 Forbidden");
     }
+
+    @PutMapping("/edit/{userId}")
+    Users editUser(@RequestBody Users users, @PathVariable Long userId) {
+        Users users1 = this.userRepository.findByUserId(userId);
+        users1.setUsername(users.getUsername());
+        users1.setPassword(users.getPassword());
+        users1.setFullName(users.getFullName());
+        users1.setEmail(users.getEmail());
+        users1.setGender(users.getGender());
+        users1.setTwoFactorEnabled(users.getTwoFactorEnabled());
+        users1.setIsEnabled(users.getIsEnabled());
+        users1.setPhoneNum(users.getPhoneNum());
+        users1.setBirthDate(users.getBirthDate());
+        users1.setTwoFactorEnabled(users.getTwoFactorEnabled());
+        users1.setRoles(users.getRoles());
+        users1.setAddress(users.getAddress());
+
+        return userService.editUser(users1);
+    }
+
+
+
 
     @DeleteMapping("/delete/user/{userId}")
     void deleteUser(@PathVariable Long userId) {
