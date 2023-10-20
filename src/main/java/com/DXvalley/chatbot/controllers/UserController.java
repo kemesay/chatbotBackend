@@ -271,7 +271,8 @@ public class UserController {
         if (existingUser != null) {
             // Update the fields of the existing user
             existingUser.setUsername(users.getUsername());
-            existingUser.setPassword(users.getPassword());
+            existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
+//            existingUser.setPassword(users.getPassword());
             existingUser.setFullName(users.getFullName());
             existingUser.setEmail(users.getEmail());
             existingUser.setGender(users.getGender());
