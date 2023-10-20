@@ -122,7 +122,28 @@ public class UserController {
         createUserResponse response = new createUserResponse("success", "user created successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PostMapping("/signUp")
+    public ResponseEntity<createUserResponse> register(@RequestBody Users tempUser) {
+        var user = userRepository.findByUsername(tempUser.getUsername());
+        String password;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        if (user != null) {
+            createUserResponse response = new createUserResponse("error", "user already exists");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
 
+        tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName())).collect(Collectors.toList()));
+        password = tempUser.getPassword();
+        tempUser.setPassword(passwordEncoder.encode(tempUser.getPassword()));
+        tempUser.setFullName(tempUser.getFullName());
+        tempUser.setCreatedAt(LocalDateTime.now().format(dateTimeFormatter));
+//        tempUser.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
+//        tempUser.setCoverImgUrl("http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
+        userRepository.save(tempUser);
+//        emailService.sendEmail(tempUser.getEmail(), "user created!",tempUser.getFullName(),"USER_CREATED",tempUser.getUsername(),password);
+        createUserResponse response = new createUserResponse("success", "signUp successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PutMapping("/uploadCoverImg/{userNameOrEmail}")
     public ResponseEntity<?> uploadCoverImg(@RequestParam MultipartFile coverImg, @PathVariable String userNameOrEmail) {
