@@ -279,6 +279,7 @@ public class UserController {
             existingUser.setTwoFactorEnabled(users.getTwoFactorEnabled());
             existingUser.setIsEnabled(users.getIsEnabled());
             existingUser.setPhoneNum(users.getPhoneNum());
+
             existingUser.setBirthDate(users.getBirthDate());
 
             // Update the address

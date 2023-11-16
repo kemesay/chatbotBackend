@@ -1,15 +1,10 @@
 package com.DXvalley.chatbot.models;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import com.DXvalley.chatbot.auth_provider.Provider;
+import jakarta.persistence.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -38,6 +33,12 @@ public class Users {
     private Integer accessFailedCount;
     private Boolean twoFactorEnabled;
     private Boolean isEnabled;
+
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+
+
     //private String verificationCode;
     //private boolean verificationCodeCreatedAt;
 
