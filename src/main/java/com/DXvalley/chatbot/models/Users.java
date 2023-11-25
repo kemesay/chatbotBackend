@@ -37,7 +37,8 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
 
     //private String verificationCode;
     //private boolean verificationCodeCreatedAt;

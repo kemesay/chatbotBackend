@@ -1,10 +1,6 @@
 package com.DXvalley.chatbot.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +18,10 @@ public class Office {
     private String name;
     private float longitude;
     private String description;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
+
     public Office(String address, String description, float longitude,  float latitude, String name){
         this.address=address;
         this.description=description;

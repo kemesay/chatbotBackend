@@ -3,8 +3,6 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,12 +26,14 @@ public class Tourist {
     private String birthDate;
     private String email;
     private String phoneNum;
+
     private String durationOfStay;
     private String passportId;
     private String zipcode;
     private String  visitedAt;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Destination> destinations = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
     public Tourist(String fullName, List<String> tourCategory, String touristType  ,String country, String city,  String subCity, String gender, String birthDate, String email,
                    String phoneNum, String durationOfStay, String passportId, String zipcode, String visitedAt){
         this.fullName=fullName;

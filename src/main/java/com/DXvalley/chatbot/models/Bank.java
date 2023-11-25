@@ -1,13 +1,12 @@
 package com.DXvalley.chatbot.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -22,14 +21,17 @@ public class Bank {
     private float latitude;
     private float longitude;
     private String description;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
+
+
     public Bank(String name, String address ,String description, float latitude, float longitude){
         this.name=name;
         this.longitude=longitude;
         this.description=description;
         this.latitude=latitude;
         this.address=address;
-
-
     }
 
 }

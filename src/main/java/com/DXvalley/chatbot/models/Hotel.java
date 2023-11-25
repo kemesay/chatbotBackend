@@ -1,9 +1,6 @@
 package com.DXvalley.chatbot.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +19,8 @@ public class Hotel {
     private float longitude;
     private String address;
     private String description;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
     public Hotel(String name, String address ,String description, float latitude, float longitude){
         this.name=name;
         this.address=address;

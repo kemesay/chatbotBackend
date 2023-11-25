@@ -26,8 +26,8 @@ public class TourPackage {
     private String packageDescription;
     private String departureDates;
     private String createdAt;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Destination> destinations = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<TourOpertaor> tourOpertaor = new ArrayList<>();
 

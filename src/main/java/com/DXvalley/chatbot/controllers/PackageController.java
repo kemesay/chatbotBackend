@@ -63,7 +63,7 @@ public class PackageController {
         TourPackage tourPackage1 = this.tourPackageRepository.findByPackageId(packageId);
         tourPackage1.setPackageName(tourPackage.getPackageName());
         tourPackage1.setPackageDescription(tourPackage.getPackageDescription());
-        tourPackage1.setDestinations(tourPackage.getDestinations());
+        tourPackage1.setDestination(tourPackage.getDestination());
         tourPackage1.setDepartureDates(tourPackage.getDepartureDates());
         tourPackage1.setMaxGroup(tourPackage.getMaxGroup());
         tourPackage1.setPackagePricePerPerson(tourPackage.getPackagePricePerPerson());

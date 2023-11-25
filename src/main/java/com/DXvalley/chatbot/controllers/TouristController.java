@@ -30,7 +30,7 @@ public class TouristController{
         TouristController.ResponseMessage responseMessage;
         if (tourist1==null) {
             Date date = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
             tourist.setVisitedAt(dateFormat.format(date));
             touristService.registerTourist(tourist);
             responseMessage = new TouristController.ResponseMessage("success", "Tourist Registered successfully");
@@ -68,7 +68,7 @@ public class TouristController{
         tourist1.setFullName(tourist.getGender());
         tourist1.setDurationOfStay(tourist.getEmail());
         tourist1.setBirthDate(tourist.getBirthDate());
-        tourist1.setDestinations(tourist.getDestinations());
+        tourist1.setDestination(tourist.getDestination());
         tourist1.setPassportId(tourist.getPassportId());
 
         return touristService.editTourist(tourist1);
@@ -77,7 +77,10 @@ public class TouristController{
     void deleteTourist(@PathVariable Long touristId) {
         this.touristRepository.deleteById(touristId);
     }
-
+@GetMapping("/get-tourist-graph-data")
+ResponseEntity<?>getTouristGraphData(){
+        return touristService.getTouristGraphData();
+}
     @Getter
     @Setter
     @AllArgsConstructor

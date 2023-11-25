@@ -2,12 +2,15 @@ package com.DXvalley.chatbot.controllers;
 
 import com.DXvalley.chatbot.models.Role;
 import com.DXvalley.chatbot.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
+
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.RoleRepository;
@@ -29,6 +34,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -63,6 +69,8 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findByUsername((String) auth.getPrincipal()).getUsername().equals(userName);
     }
+
+
 
     @GetMapping("/getUsers")
     List<Users> getUsers() {
@@ -100,6 +108,28 @@ public class UserController {
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+    @GetMapping("/oauth2/code/google")
+    public String handleGoogleCallback(@AuthenticationPrincipal OAuth2User principal) {
+        // Extract user information from OAuth2User
+        String email = principal.getAttribute("email");
+
+        // Check if the user exists in the database
+        Optional<Users> optionalUser = userRepository.findByEmail(email);
+        Users user = optionalUser.orElseGet(() -> {
+            // If not, create a new user and save to the database
+            Users newUser = new Users();
+            newUser.setEmail(email);
+            // Set other user details...
+            return userRepository.save(newUser);
+        });
+
+        // Authenticate the user
+        // (You may use Spring Security's authentication mechanisms)
+
+        return "redirect:/dashboard/reports"; // Redirect to the home page after successful login
+    }
+
     @PostMapping("/createUser")
     public ResponseEntity<createUserResponse> accept(@RequestBody Users tempUser) {
         var user = userRepository.findByUsername(tempUser.getUsername());

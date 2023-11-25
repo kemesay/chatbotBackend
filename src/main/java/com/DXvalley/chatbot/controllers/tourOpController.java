@@ -67,7 +67,7 @@ public class tourOpController {
         tourOpertaor1.setTourCategory(tourOpertaor.getTourCategory());
         tourOpertaor1.setFoundAt(tourOpertaor.getFoundAt());
         tourOpertaor1.setTinNum(tourOpertaor.getTinNum());
-        tourOpertaor1.setDestinations(tourOpertaor.getDestinations());
+        tourOpertaor1.setDestination(tourOpertaor.getDestination());
 
         return tourOpService.editTourOp(tourOpertaor1);
     }

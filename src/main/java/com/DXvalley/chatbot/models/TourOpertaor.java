@@ -27,8 +27,9 @@ public class TourOpertaor {
     private String foundAt;
     private  String tinNum;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Destination> destinations = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
     public TourOpertaor(String tourOrgName, List<String> touristType, String ownerFullName  ,String ownerAddress,  String email,
                                                      String phoneNum, String foundAt,  List<String> tourCategory, String tinNum){
         this.tourOrgName=tourOrgName;

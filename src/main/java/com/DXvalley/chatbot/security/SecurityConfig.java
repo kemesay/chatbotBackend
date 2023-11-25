@@ -3,6 +3,8 @@ package com.DXvalley.chatbot.security;
 import com.DXvalley.chatbot.security.filters.JwtAuthenticationFilter;
 import com.DXvalley.chatbot.security.filters.JwtAuthorizationFilter;
 import com.DXvalley.chatbot.security.oauth.CustomOAuth2UserService;
+import com.DXvalley.chatbot.security.oauth.OAuth2LoginSuccessHandler;
+import com.DXvalley.chatbot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.security.PrivateKey;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -27,17 +31,22 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final CustomOAuth2UserService customOAuth2UserService;
-
+    private final UserService userService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     @Autowired
     public SecurityConfig(
             CustomUserDetailsService customUserDetailsService,
             PasswordEncoder passwordEncoder,
+            UserService userService,
             AuthenticationConfiguration authenticationConfiguration,
+            OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
             CustomOAuth2UserService customOAuth2UserService) {
         this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.userService=userService;
         this.authenticationConfiguration = authenticationConfiguration;
         this.customOAuth2UserService = customOAuth2UserService;
+        this.oAuth2LoginSuccessHandler=oAuth2LoginSuccessHandler;
     }
 
     @Bean
@@ -57,13 +66,15 @@ public class SecurityConfig {
                 .authorizeRequests(authorize -> {
                     authorize
                             .requestMatchers("/oauth2/**").permitAll()
-                            .requestMatchers("/**").permitAll();
-                    // Add more specific authorization rules as needed
+                            .requestMatchers("/login/**").permitAll() // Allow access to login endpoints
+                            .requestMatchers("/dashboard/**").authenticated()
+                            .anyRequest().permitAll();
                 })
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
+                        .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration)))
                 .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)

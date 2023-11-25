@@ -41,6 +41,8 @@ public class BankController {
         return new ResponseEntity<>(bank,HttpStatus.OK);
 //        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
     }
+
+
     @GetMapping("/getBank/{bankId}")
     public ResponseEntity<?> getByBankId(@PathVariable Long bankId) {
         var bank = bankRepository.findByBankId(bankId);

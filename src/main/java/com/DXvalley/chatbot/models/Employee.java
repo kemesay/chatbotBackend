@@ -1,7 +1,6 @@
 package com.DXvalley.chatbot.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +23,10 @@ public class Employee {
     private String phoneNum;
     private String address;
     private String gender;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Destination destination;
+
     private String birthDate;
     private Boolean isActive;
 
