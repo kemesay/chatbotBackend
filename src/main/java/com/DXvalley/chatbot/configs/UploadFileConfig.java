@@ -13,8 +13,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UploadFileConfig {
     private String cloud_name = "denkdg1tl";
-    private String api_key = "783191128755548";
-    private String api_secret = "gOfNeuB2Brj7OA2VZjq7h8pm9YU";
+    private String api_key = "351435829686486";
+    private String api_secret = "vFn8iVl-5xYKJRLTtGDm_xK_pkQ";
 
     @Bean
     public Cloudinary cloudinaryConfig() {

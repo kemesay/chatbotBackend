@@ -66,8 +66,8 @@ public class SecurityConfig {
                 .authorizeRequests(authorize -> {
                     authorize
                             .requestMatchers("/oauth2/**").permitAll()
-                            .requestMatchers("/login/**").permitAll() // Allow access to login endpoints
-                            .requestMatchers("/dashboard/**").authenticated()
+                            .requestMatchers("/**").permitAll() // Allow access to login endpoints
+//                            .requestMatchers("/dashboard/**").authenticated()
                             .anyRequest().permitAll();
                 })
                 .oauth2Login(oauth2 -> oauth2

@@ -1,14 +1,17 @@
 package com.DXvalley.chatbot.controllers;
 
 import com.DXvalley.chatbot.models.Role;
+import com.DXvalley.chatbot.repository.TouristRepository;
 import com.DXvalley.chatbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,6 +46,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final TouristRepository touristRepository;
     @Autowired
     private final RoleRepository roleRepo;
     @Autowired
@@ -71,7 +77,6 @@ public class UserController {
     }
 
 
-
     @GetMapping("/getUsers")
     List<Users> getUsers() {
         if (isSysAdmin()) {
@@ -87,6 +92,7 @@ public class UserController {
         });
         return users;
     }
+
     @GetMapping("/getUserByUsernameOrEmail/{usernameOrEmail}")
     public ResponseEntity<?> getUserByUsernameOrEmail(@PathVariable String usernameOrEmail) {
         var user = userRepository.findByEmailOrUsername(usernameOrEmail, usernameOrEmail);
@@ -109,26 +115,26 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/oauth2/code/google")
-    public String handleGoogleCallback(@AuthenticationPrincipal OAuth2User principal) {
-        // Extract user information from OAuth2User
-        String email = principal.getAttribute("email");
+//    @GetMapping("/oauth2/code/google")
+//    public String handleGoogleCallback(@AuthenticationPrincipal OAuth2User principal) {
+//        // Extract user information from OAuth2User
+//        String email = principal.getAttribute("email");
+//
+//        // Check if the user exists in the database
+//        Optional<Users> optionalUser = userRepository.findByEmail(email);
+//        Users user = optionalUser.orElseGet(() -> {
+//            // If not, create a new user and save to the database
+//            Users newUser = new Users();
+//            newUser.setEmail(email);
+//            // Set other user details...
+//            return userRepository.save(newUser);
+//        });
 
-        // Check if the user exists in the database
-        Optional<Users> optionalUser = userRepository.findByEmail(email);
-        Users user = optionalUser.orElseGet(() -> {
-            // If not, create a new user and save to the database
-            Users newUser = new Users();
-            newUser.setEmail(email);
-            // Set other user details...
-            return userRepository.save(newUser);
-        });
+    // Authenticate the user
+    // (You may use Spring Security's authentication mechanisms)
 
-        // Authenticate the user
-        // (You may use Spring Security's authentication mechanisms)
-
-        return "redirect:/dashboard/reports"; // Redirect to the home page after successful login
-    }
+//        return "redirect:/dashboard/reports"; // Redirect to the home page after successful login
+//    }
 
     @PostMapping("/createUser")
     public ResponseEntity<createUserResponse> accept(@RequestBody Users tempUser) {
@@ -145,13 +151,15 @@ public class UserController {
         tempUser.setPassword(passwordEncoder.encode(tempUser.getPassword()));
         tempUser.setFullName(tempUser.getFullName());
         tempUser.setCreatedAt(LocalDateTime.now().format(dateTimeFormatter));
+        System.out.println(tempUser.getUsername() + password);
         tempUser.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
         tempUser.setCoverImgUrl("http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
         userRepository.save(tempUser);
-        emailService.sendEmail(tempUser.getEmail(), "user created!",tempUser.getFullName(),"USER_CREATED",tempUser.getUsername(),password);
+        emailService.sendEmail(tempUser.getEmail(), "user created!", tempUser.getFullName(), "USER_CREATED", tempUser.getUsername(), password);
         createUserResponse response = new createUserResponse("success", "user created successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PostMapping("/signUp")
     public ResponseEntity<createUserResponse> register(@RequestBody Users tempUser) {
         var user = userRepository.findByUsername(tempUser.getUsername());
@@ -195,6 +203,7 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
     }
+
     @PutMapping("/uploadProfileImg/{userNameOrEmail}")
     public ResponseEntity<?> uploadProfileImg(@RequestParam MultipartFile profileImg, @PathVariable String userNameOrEmail) {
         String profileImgUrl = null;
@@ -254,13 +263,14 @@ public class UserController {
         } else {
             user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
 
-            emailService.sendEmail(user.getEmail(), "password changed!",user.getFullName(),"PASSWORD_CHANGED",null,null);
+            emailService.sendEmail(user.getEmail(), "password changed!", user.getFullName(), "PASSWORD_CHANGED", null, null);
             userRepository.save(user);
             response = new pinchangeResponse("Password Change successfully");
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
+
     @PutMapping("/changePin/{phoneNumber}")
     public ResponseEntity<pinchangeResponse> pinChange(@RequestBody Users tempUser,
                                                        @PathVariable String phoneNumber) {
@@ -275,6 +285,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
     @PutMapping("/manageAccount/{userName}/{usernameChange}")
     public Users manageAccount(@RequestBody UsernamePassword temp,
                                @PathVariable String userName,
@@ -301,7 +312,7 @@ public class UserController {
         if (existingUser != null) {
             // Update the fields of the existing user
             existingUser.setUsername(users.getUsername());
-            existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
+//            existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
 //            existingUser.setPassword(users.getPassword());
             existingUser.setFullName(users.getFullName());
             existingUser.setEmail(users.getEmail());
@@ -344,7 +355,10 @@ public class UserController {
         this.userRepository.deleteById(userId);
     }
 
+
+
 }
+
 
 @Getter
 @Setter

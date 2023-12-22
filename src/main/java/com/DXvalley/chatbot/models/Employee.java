@@ -24,11 +24,14 @@ public class Employee {
     private String address;
     private String gender;
 
+    private String registeredAt;
+
     @OneToOne(cascade = CascadeType.ALL)
     private Destination destination;
 
     private String birthDate;
     private Boolean isActive;
+
 
 
     @ManyToMany(fetch = FetchType.EAGER)

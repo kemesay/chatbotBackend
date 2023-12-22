@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,6 +30,9 @@ public class EmployeeController {
         var employee1=employeeRepository.findByPhoneNum(employee.getPhoneNum());
         ResponseMessage responseMessage;
         if (employee1==null) {
+            Date date = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+            employee.setRegisteredAt(dateFormat.format(date));
             employeeService.registerEmployee(employee);
             responseMessage = new ResponseMessage("success", "employee created successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -72,6 +78,12 @@ public class EmployeeController {
     @DeleteMapping("/delete/employee/{employeeId}")
     void deleteEmployee(@PathVariable Long employeeId) {
         this.employeeRepository.deleteById(employeeId);
+    }
+
+
+    @GetMapping("/get-employee-graph-data")
+    ResponseEntity<?>getEmployeeGraphData(){
+        return employeeService.getEmployeeGraphData();
     }
 
     @Getter

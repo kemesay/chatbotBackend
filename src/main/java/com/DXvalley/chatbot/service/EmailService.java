@@ -94,7 +94,7 @@ public class EmailService {
                 " <p>\n" +
                 "   We are pleased to inform you that your account has been created in our system by our Super Admin. You can now access the system using the login credential provided below to you.\n" +
                 " To access the system, please go to\n" +
-                " <a href=\"www.equbadmin.com\" style=\"text-decoration: none;\">Visit Oromia admin</a> \n" +
+                " <a href=\"www.visitEthiopia.com\" style=\"text-decoration: none;\">Visit Ethiopa portal Admin</a> \n" +
                 "and enter your login credentials. \n" +
                 " <p><b style=\"color:#c74e22\">We kindly request you to change your password after you login with default credential!</b>\n" +
                 "   If you have any questions or concerns, please do not hesitate to contact us. We are always here to help.</p>\n" +

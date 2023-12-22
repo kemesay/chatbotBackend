@@ -33,13 +33,14 @@ public class TouristServiceIpm implements TouristService {
 
     @Override
     public ResponseEntity<?> getTouristGraphData() {
-        Tourist firstRegisteredTourist = touristRepository.findFirstRegisteredEntity();
-        String startDate = firstRegisteredTourist.getVisitedAt();
+        List<Tourist> touristList = touristRepository.findFirstRegisteredEntity();
+        List<Tourist> allTourists = touristRepository.findAll();
+        Tourist firstTourist = touristList.get(0);
+        String startDate = firstTourist.getVisitedAt();
         Collection<String> dates = new ArrayList<>();
 
         String inputDateStr = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate inputDate = LocalDate.parse(inputDateStr, DateTimeFormatter.ISO_LOCAL_DATE);
-
 
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate nextDay;
@@ -62,7 +63,17 @@ public class TouristServiceIpm implements TouristService {
         dates.forEach((date -> {
             Collection<Object> timestampVsValue = new ArrayList<>();
             timestampVsValue.add(getTimestamp(date));
-            timestampVsValue.add(0.95);
+            addValue(timestampVsValue, dates);
+
+            int touristCounter = 0;
+
+            for (Tourist tourist : allTourists) {
+                if (tourist.getVisitedAt().substring(0, 10).equals(date.substring(0, 10))) {
+                    touristCounter++;
+                }
+            }
+
+            timestampVsValue.add(touristCounter);
             fullData.add(timestampVsValue);
         }));
 
@@ -75,8 +86,11 @@ public class TouristServiceIpm implements TouristService {
         return touristRepository.findAll();
     }
 
+    void addValue(Collection<Object> timestampVsValue, Collection<String> dates) {
+
+    }
+
     Long getTimestamp(String visitedAt) {
-        System.out.println(visitedAt);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
         LocalDateTime localDateTime = LocalDateTime.parse(visitedAt, formatter);
 
@@ -84,7 +98,7 @@ public class TouristServiceIpm implements TouristService {
         // Extract individual components
         int year = localDateTime.getYear();
         int month = localDateTime.getMonthValue();
-        int day = localDateTime.getDayOfMonth();
+        int day =   localDateTime.getDayOfMonth();
         int hour = localDateTime.getHour();
         int minute = localDateTime.getMinute();
         int second = localDateTime.getSecond();
