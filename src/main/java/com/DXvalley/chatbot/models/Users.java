@@ -37,7 +37,8 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "destination_destination_id")
     private Destination destination;
 
     //private String verificationCode;

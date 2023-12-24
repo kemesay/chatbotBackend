@@ -1,6 +1,8 @@
 package com.DXvalley.chatbot.controllers;
 
+import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Role;
+import com.DXvalley.chatbot.repository.DestinationRepository;
 import com.DXvalley.chatbot.repository.TouristRepository;
 import com.DXvalley.chatbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +51,9 @@ public class UserController {
 
     @Autowired
     private final TouristRepository touristRepository;
+
+    @Autowired
+    private final DestinationRepository destinationRepository;
     @Autowired
     private final RoleRepository roleRepo;
     @Autowired
@@ -138,6 +143,13 @@ public class UserController {
 
     @PostMapping("/createUser")
     public ResponseEntity<createUserResponse> accept(@RequestBody Users tempUser) {
+//        Destination destination = destinationRepository.findByName(tempUser.getDestination().getName());
+        Destination destination = destinationRepository.findByDestinationId(tempUser.getDestination().getDestinationId());
+        if (destination == null) {
+            createUserResponse response = new createUserResponse("error", "destination not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
         var user = userRepository.findByUsername(tempUser.getUsername());
         String password;
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -149,6 +161,7 @@ public class UserController {
         tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName())).collect(Collectors.toList()));
         password = tempUser.getPassword();
         tempUser.setPassword(passwordEncoder.encode(tempUser.getPassword()));
+        tempUser.setDestination(destination);
         tempUser.setFullName(tempUser.getFullName());
         tempUser.setCreatedAt(LocalDateTime.now().format(dateTimeFormatter));
         System.out.println(tempUser.getUsername() + password);
@@ -354,7 +367,6 @@ public class UserController {
     void deleteUser(@PathVariable Long userId) {
         this.userRepository.deleteById(userId);
     }
-
 
 
 }

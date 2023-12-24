@@ -1,28 +1,46 @@
 package com.DXvalley.chatbot.serviceImp;
 
-import com.DXvalley.chatbot.models.Tourist;
+import com.DXvalley.chatbot.models.*;
 import com.DXvalley.chatbot.repository.TouristRepository;
+import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.TouristService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TouristServiceIpm implements TouristService {
     @Autowired
     TouristRepository touristRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public void registerTourist(Tourist tourist) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+        tourist.setFirstVisitedDate(dateFormat.format(date));
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        Destination destination = user.getDestination();
+        Visit visit = tourist.getVisits().get(0);
+
+        visit.setDestination(destination);
+        visit.setVisitedAt(dateFormat.format(date));
+        ArrayList<Visit> visits = new ArrayList<>();
+        visits.add(visit);
+        tourist.setVisits(visits);
         touristRepository.save(tourist);
     }
 
@@ -36,10 +54,11 @@ public class TouristServiceIpm implements TouristService {
         List<Tourist> touristList = touristRepository.findFirstRegisteredEntity();
         List<Tourist> allTourists = touristRepository.findAll();
         Tourist firstTourist = touristList.get(0);
-        String startDate = firstTourist.getVisitedAt();
+        String startDate = firstTourist.getFirstVisitedDate();
         Collection<String> dates = new ArrayList<>();
 
         String inputDateStr = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
         LocalDate inputDate = LocalDate.parse(inputDateStr, DateTimeFormatter.ISO_LOCAL_DATE);
 
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -68,7 +87,7 @@ public class TouristServiceIpm implements TouristService {
             int touristCounter = 0;
 
             for (Tourist tourist : allTourists) {
-                if (tourist.getVisitedAt().substring(0, 10).equals(date.substring(0, 10))) {
+                if (tourist.getFirstVisitedDate().substring(0, 10).equals(date.substring(0, 10))) {
                     touristCounter++;
                 }
             }
@@ -83,7 +102,32 @@ public class TouristServiceIpm implements TouristService {
 
     @Override
     public List<Tourist> fetchTourists() {
-        return touristRepository.findAll();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        List<Tourist> allTourists = touristRepository.findAll();
+        List<Tourist> touristsToReturn = new ArrayList<>();
+        Collection<Role> roles = user.getRoles();
+        for (Role role :
+                roles) {
+            String userRole = role.getRoleName();
+            if (userRole.equals("System Admin")) {
+                touristsToReturn = touristRepository.findAll();
+            } else if (userRole.equals("admin")) {
+
+                for (Tourist tourist :
+                        allTourists) {
+                    for (Visit visit :
+                            tourist.getVisits()) {
+                        boolean isTouristAtTheDestination=visit.getDestination().getDestinationId().equals(user.getDestination().getDestinationId());
+                        if (isTouristAtTheDestination) {
+                            touristsToReturn.add(tourist);
+                        }
+                    }
+                }
+            }
+        }
+        return touristsToReturn;
     }
 
     void addValue(Collection<Object> timestampVsValue, Collection<String> dates) {
@@ -98,7 +142,7 @@ public class TouristServiceIpm implements TouristService {
         // Extract individual components
         int year = localDateTime.getYear();
         int month = localDateTime.getMonthValue();
-        int day =   localDateTime.getDayOfMonth();
+        int day = localDateTime.getDayOfMonth();
         int hour = localDateTime.getHour();
         int minute = localDateTime.getMinute();
         int second = localDateTime.getSecond();

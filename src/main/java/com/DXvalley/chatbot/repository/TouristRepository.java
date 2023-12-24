@@ -14,11 +14,13 @@ import java.util.Optional;
 public interface TouristRepository extends JpaRepository<Tourist, Long> {
     Tourist findByPhoneNum(String phoneNum);
 
+    Tourist findByPhoneNumAndFullName(String phoneNum, String fullName);
+
     Tourist findByTouristId(Long touristId);
 
     Tourist findByEmailOrPassportId(String email, String passportId);
 
-    @Query("SELECT e FROM Tourist e ORDER BY e.visitedAt ASC")
+    @Query("SELECT e FROM Tourist e ORDER BY e.firstVisitedDate ASC")
     List<Tourist> findFirstRegisteredEntity();
 
     @Query("SELECT COUNT(u) FROM Tourist u WHERE YEAR(CURRENT_DATE) - YEAR(TO_DATE(u.birthDate, 'yyyyMMdd')) BETWEEN ?1 AND ?2")

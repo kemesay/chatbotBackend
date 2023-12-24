@@ -1,7 +1,11 @@
 package com.DXvalley.chatbot.controllers;
 
+import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Tourist;
+import com.DXvalley.chatbot.models.Users;
+import com.DXvalley.chatbot.models.Visit;
 import com.DXvalley.chatbot.repository.TouristRepository;
+import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.TouristService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,14 +13,13 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/tourist")
@@ -24,22 +27,41 @@ public class TouristController {
     @Autowired
     private TouristService touristService;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private TouristRepository touristRepository;
 
     @PostMapping("/registerTourist")
     public ResponseEntity<?> createTourist(@RequestBody Tourist tourist) {
-        var tourist1 = touristRepository.findByPhoneNum(tourist.getPhoneNum());
+
+        var existingTourist = touristRepository.findByPhoneNumAndFullName(tourist.getPhoneNum(), tourist.getFullName());
         TouristController.ResponseMessage responseMessage;
-        if (tourist1 == null) {
-            Date date = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
-            tourist.setVisitedAt(dateFormat.format(date));
+
+        if (existingTourist == null) {
             touristService.registerTourist(tourist);
             responseMessage = new TouristController.ResponseMessage("success", "Tourist Registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } else {
-            responseMessage = new TouristController.ResponseMessage("fail", "Tourist register fail");
-            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            Users user = userRepository.findByEmailOrUsername(username, username);
+
+            Destination destination = user.getDestination();
+
+            List<Visit> updatedVisits = existingTourist.getVisits();
+
+            Visit addedVisit = new Visit();
+            Date date = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+            addedVisit.setVisitedAt(dateFormat.format(date));
+            addedVisit.setDurationOfStay(tourist.getVisits().get(0).getDurationOfStay());
+            addedVisit.setDestination(destination);
+
+            updatedVisits.add(addedVisit);
+            existingTourist.setVisits(updatedVisits);
+            touristRepository.save(existingTourist);
+            responseMessage = new TouristController.ResponseMessage("success", "Tourist successfully updated");
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }
     }
 
@@ -61,22 +83,36 @@ public class TouristController {
     }
 
     @PutMapping("/edit/{touristId}")
-    Tourist editTourist(@RequestBody Tourist tourist, @PathVariable Long touristId) {
-        Tourist tourist1 = this.touristRepository.findByTouristId(touristId);
-        tourist1.setTouristType(tourist.getTouristType());
-        tourist1.setCity(tourist.getCity());
-        tourist1.setGender(tourist.getGender());
-        tourist1.setEmail(tourist.getEmail());
-        tourist1.setZipcode(tourist.getZipcode());
-        tourist1.setCountry(tourist.getTouristType());
-        tourist1.setCity(tourist.getCity());
-        tourist1.setFullName(tourist.getGender());
-        tourist1.setDurationOfStay(tourist.getEmail());
-        tourist1.setBirthDate(tourist.getBirthDate());
-        tourist1.setDestination(tourist.getDestination());
-        tourist1.setPassportId(tourist.getPassportId());
+    Tourist editTourist(@RequestBody Tourist updatedTourist, @PathVariable Long touristId) {
+        Tourist existingTourist = this.touristRepository.findByTouristId(touristId);
+        List<Visit> existingVisits = existingTourist.getVisits();
+        List<Visit> updatedVisits = updatedTourist.getVisits();
 
-        return touristService.editTourist(tourist1);
+        for (Visit updatedVisit : updatedVisits) {
+            for (Visit existingVisit : existingVisits) {
+                if (existingVisit.getVisitId().equals(updatedVisit.getVisitId())) {
+                    existingVisit.setDurationOfStay(updatedVisit.getDurationOfStay());
+                }
+            }
+        }
+
+        // Set the updated visits to the existing tourist
+        existingTourist.setVisits(existingVisits);
+
+        existingTourist.setTouristType(updatedTourist.getTouristType());
+        existingTourist.setCity(updatedTourist.getCity());
+        existingTourist.setGender(updatedTourist.getGender());
+        existingTourist.setEmail(updatedTourist.getEmail());
+        existingTourist.setZipcode(updatedTourist.getZipcode());
+        existingTourist.setCountry(updatedTourist.getTouristType());
+        existingTourist.setCity(updatedTourist.getCity());
+        existingTourist.setFullName(updatedTourist.getGender());
+//        tourist1.setDurationOfStay(tourist.getEmail());
+        existingTourist.setBirthDate(updatedTourist.getBirthDate());
+//        tourist1.setDestination(tourist.getDestination());
+        existingTourist.setPassportId(updatedTourist.getPassportId());
+        touristRepository.save(existingTourist);
+        return null;
     }
 
     @DeleteMapping("/delete/tourist/{touristId}")
@@ -107,6 +143,7 @@ public class TouristController {
 
         return arrayOfAgeRangeCount;
     }
+
     @GetMapping("/findFemaleAndMaleCount")
     Map<String, Long> findFemaleAndMaleCount() {
         return touristRepository.findFemaleAndMaleCount();
