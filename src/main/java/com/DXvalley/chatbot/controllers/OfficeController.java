@@ -1,13 +1,19 @@
 package com.DXvalley.chatbot.controllers;
 import com.DXvalley.chatbot.models.Office;
+import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.OfficeRepository;
+import com.DXvalley.chatbot.repository.UserRepository;
+import com.DXvalley.chatbot.security.SecurityConfig;
 import com.DXvalley.chatbot.service.OfficeService;
+import com.nimbusds.jose.proc.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +23,13 @@ import java.util.List;
 public class OfficeController {
     @Autowired
     private OfficeService officeService;
+
     @Autowired
     private OfficeRepository officeRepository;
     @PostMapping("/registerOffice")
     public ResponseEntity<?> createOffice(@RequestBody Office office) {
+
+
         Office office1=officeRepository.findByName(office.getName());
         OfficeController.ResponseMessage responseMessage;
         if (office1==null) {
@@ -36,7 +45,6 @@ public class OfficeController {
     private ResponseEntity<?> fetchOffices(){
         List<Office> office=officeService.fetchOffices();
         return new ResponseEntity<>(office,HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
     }
     @GetMapping("/getOffice/{officeId}")
     public ResponseEntity<?> getByOfficeId(@PathVariable Long officeId) {

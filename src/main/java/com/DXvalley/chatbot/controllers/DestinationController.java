@@ -1,7 +1,10 @@
 package com.DXvalley.chatbot.controllers;
+
 import com.DXvalley.chatbot.models.Destination;
+import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.DestinationRepository;
 import com.DXvalley.chatbot.service.DestinationService;
+import com.DXvalley.chatbot.serviceImp.PackageServiceImp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,26 +22,28 @@ public class DestinationController {
     private DestinationService destinationService;
     @Autowired
     private DestinationRepository destinationRepository;
+
     @PostMapping("/registerDestination")
     public ResponseEntity<?> createDestination(@RequestBody Destination destination) {
-        Destination destination1=destinationRepository.findByName(destination.getName());
+        Destination destination1 = destinationRepository.findByName(destination.getName());
         DestinationController.ResponseMessage responseMessage;
-        if (destination1==null) {
+        if (destination1 == null) {
             destinationService.registerDestination(destination);
             responseMessage = new DestinationController.ResponseMessage("success", "Destination registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        }else {
+        } else {
             responseMessage = new DestinationController.ResponseMessage("fail", "Destination  already exist");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getDestinations")
-    private ResponseEntity<?> fetchDestinations(){
-        List<Destination> destinations=destinationService.fetchDestinations();
-        return new ResponseEntity<>(destinations,HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
+    private ResponseEntity<?> fetchDestinations() {
+
+        List<Destination> destinations = destinationService.fetchDestinations();
+        return new ResponseEntity<>(destinations, HttpStatus.OK);
     }
+
     @GetMapping("/getDestination/{destinationId}")
     public ResponseEntity<?> getByDestinationId(@PathVariable Long destinationId) {
         var destination = destinationRepository.findByDestinationId(destinationId);

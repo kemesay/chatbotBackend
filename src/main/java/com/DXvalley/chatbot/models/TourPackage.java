@@ -26,10 +26,15 @@ public class TourPackage {
     private String packageDescription;
     private String departureDates;
     private String createdAt;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Destination destination;
+    @OneToOne
+    private Users packageCreator;
+    @Enumerated(EnumType.STRING)
+    private PackageType packageType;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Destination> destinations;
+
     @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<TourOpertaor> tourOpertaor = new ArrayList<>();
+    private Collection<TourOperator> tourOperator = new ArrayList<>();
 
     public TourPackage(String maxGroup, List<String> packageForDorInter,List<String> touristType, String packageDescription  ,String departureDates,  String createdAt,
                         String packagePricePerPerson, String stayDuration,  String packageName){

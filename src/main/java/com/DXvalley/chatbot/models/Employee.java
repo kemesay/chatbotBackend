@@ -26,13 +26,11 @@ public class Employee {
 
     private String registeredAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Destination destination;
 
     private String birthDate;
     private Boolean isActive;
-
-
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Office> office = new ArrayList<>();

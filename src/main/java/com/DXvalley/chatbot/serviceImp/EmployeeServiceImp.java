@@ -1,11 +1,17 @@
 package com.DXvalley.chatbot.serviceImp;
 
+import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Employee;
+import com.DXvalley.chatbot.models.Office;
+import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.EmployeeRepository;
+import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -18,19 +24,31 @@ import java.util.List;
 public class EmployeeServiceImp implements EmployeeService {
     @Autowired
     EmployeeRepository employeeRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public void registerEmployee(Employee employee) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        Destination destination = user.getDestination();
+        employee.setDestination(destination);
         employeeRepository.save(employee);
     }
+
     @Override
     public Employee editEmployee(Employee employee) {
         return this.employeeRepository.save(employee);
     }
-    @Override
-    public List<Employee> fetchEmployee() { return employeeRepository.findAll();}
 
     @Override
-    public ResponseEntity<?> getEmployeeGraphData(){
+    public List<Employee> fetchEmployee() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    public ResponseEntity<?> getEmployeeGraphData() {
         List<Employee> employeeList = employeeRepository.findFirstRegisteredEmployeeEntity();
         List<Employee> allEmployees = employeeRepository.findAll();
         Employee firstEmployee = employeeList.get(0);
@@ -76,7 +94,7 @@ public class EmployeeServiceImp implements EmployeeService {
         }));
 
 
-        return new ResponseEntity<> (fullData, HttpStatus.OK);
+        return new ResponseEntity<>(fullData, HttpStatus.OK);
     }
 
 

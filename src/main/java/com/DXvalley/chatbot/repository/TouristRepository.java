@@ -1,5 +1,6 @@
 package com.DXvalley.chatbot.repository;
 
+import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Tourist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,6 +23,11 @@ public interface TouristRepository extends JpaRepository<Tourist, Long> {
 
     @Query("SELECT e FROM Tourist e ORDER BY e.firstVisitedDate ASC")
     List<Tourist> findFirstRegisteredEntity();
+
+    @Query("SELECT COUNT(u) FROM Tourist u JOIN u.visits v WHERE v.destination = :destination")
+    int countTouristsAtDestination(@Param("destination") Destination destination);
+
+
 
     @Query("SELECT COUNT(u) FROM Tourist u WHERE YEAR(CURRENT_DATE) - YEAR(TO_DATE(u.birthDate, 'yyyyMMdd')) BETWEEN ?1 AND ?2")
     Integer findByAgeRangeCount(int startAge, int endAge);

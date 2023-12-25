@@ -1,4 +1,5 @@
 package com.DXvalley.chatbot.models;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,13 +9,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class Users {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
     private String username;
     private String password;
@@ -34,6 +36,9 @@ public class Users {
     private Boolean twoFactorEnabled;
     private Boolean isEnabled;
 
+    @OneToOne
+    private TourOperator tourOperator;
+
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
@@ -50,25 +55,26 @@ public class Users {
     //user roles
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
-    public Users(String username, String phoneNum, String password, String fullName, String email, Boolean emailConfirmed,String gender,String birthDate,String imageUrl,String coverImgUrl,String ip,String createdAt,
-                 String deletedAt,Integer languageCode,  Integer accessFailedCount,  Boolean twoFactorEnabled,Boolean isEnabled) {
+
+    public Users(String username, String phoneNum, String password, String fullName, String email, Boolean emailConfirmed, String gender, String birthDate, String imageUrl, String coverImgUrl, String ip, String createdAt,
+                 String deletedAt, Integer languageCode, Integer accessFailedCount, Boolean twoFactorEnabled, Boolean isEnabled) {
         this.username = username;
-        this.password = new BCryptPasswordEncoder(). encode(password);
+        this.password = new BCryptPasswordEncoder().encode(password);
         this.fullName = fullName;
-        this.email= email;
-        this.phoneNum=phoneNum;
-        this.emailConfirmed= emailConfirmed;
-        this.gender=gender;
-        this.birthDate=birthDate;
-        this.imageUrl=imageUrl;
-        this.coverImgUrl=coverImgUrl;
-        this.ip=ip;
-        this.createdAt=createdAt;
-        this.deletedAt=deletedAt;
-        this.languageCode=languageCode;
-        this.accessFailedCount=accessFailedCount;
-        this.twoFactorEnabled=twoFactorEnabled;
-        this.isEnabled=isEnabled;
+        this.email = email;
+        this.phoneNum = phoneNum;
+        this.emailConfirmed = emailConfirmed;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.imageUrl = imageUrl;
+        this.coverImgUrl = coverImgUrl;
+        this.ip = ip;
+        this.createdAt = createdAt;
+        this.deletedAt = deletedAt;
+        this.languageCode = languageCode;
+        this.accessFailedCount = accessFailedCount;
+        this.twoFactorEnabled = twoFactorEnabled;
+        this.isEnabled = isEnabled;
         //this.verificationCode=verificationCode;
         // this.verificationCodeCreatedAt=verificationCodeCreatedAt;
     }

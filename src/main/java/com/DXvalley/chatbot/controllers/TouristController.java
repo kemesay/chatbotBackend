@@ -33,14 +33,13 @@ public class TouristController {
 
     @PostMapping("/registerTourist")
     public ResponseEntity<?> createTourist(@RequestBody Tourist tourist) {
-
         var existingTourist = touristRepository.findByPhoneNumAndFullName(tourist.getPhoneNum(), tourist.getFullName());
         TouristController.ResponseMessage responseMessage;
 
         if (existingTourist == null) {
             touristService.registerTourist(tourist);
             responseMessage = new TouristController.ResponseMessage("success", "Tourist Registered successfully");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+
         } else {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
@@ -61,8 +60,8 @@ public class TouristController {
             existingTourist.setVisits(updatedVisits);
             touristRepository.save(existingTourist);
             responseMessage = new TouristController.ResponseMessage("success", "Tourist successfully updated");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
     @GetMapping("/getTourist")

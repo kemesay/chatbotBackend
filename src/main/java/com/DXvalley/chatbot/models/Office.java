@@ -19,7 +19,7 @@ public class Office {
     private float longitude;
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Destination destination;
 
     public Office(String address, String description, float longitude,  float latitude, String name){

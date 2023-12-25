@@ -2,9 +2,14 @@ package com.DXvalley.chatbot.serviceImp;
 
 import com.DXvalley.chatbot.DTO.ReportCardsResponse;
 import com.DXvalley.chatbot.DTO.SingleReportCardData;
+import com.DXvalley.chatbot.models.Destination;
+import com.DXvalley.chatbot.models.Role;
+import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.*;
 import com.DXvalley.chatbot.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,26 +22,52 @@ public class ReportServiceImp implements ReportService {
     private DestinationRepository destinationRepository;
     @Autowired
     private TourOPRRepository tourOpRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @Override
     public ReportCardsResponse getCardsData() {
-        int touristCount = touristRepository.findAll().size();
-        int tourOperatorCounter = tourOpRepository.findAll().size();
-        int destinationCounter = destinationRepository.findAll().size();
-        int packagesCounter = tourPackageRepository.findAll().size();
-        int employeeCounter = employeeRepository.findAll().size();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        int touristCount = 0;
+        int tourOperatorCounter = 0;
+        int destinationCounter = 0;
+        int packagesCounter = 0;
+        int employeeCounter = 0;
+
+
+        for (Role userRole :
+                user.getRoles()) {
+            String role = userRole.getRoleName();
+            if (role.equals("System Admin")) {
+                touristCount = touristRepository.findAll().size();
+                tourOperatorCounter = tourOpRepository.findAll().size();
+                destinationCounter = destinationRepository.findAll().size();
+                packagesCounter = tourPackageRepository.findAll().size();
+                employeeCounter = employeeRepository.findAll().size();
+            } else if (role.equals("admin")) {
+                Destination destination = user.getDestination();
+                touristCount = touristRepository.countTouristsAtDestination(destination);
+                employeeCounter = employeeRepository.countEmployeesAtDestination(destination.getDestinationId());
+                tourOperatorCounter = tourOpRepository.countTourOperatorsAtDestination(destination);
+                destinationCounter = destinationRepository.findAll().size();
+                packagesCounter = tourPackageRepository.findAll().size();
+            } else {
+
+            }
+        }
+
 
         ReportCardsResponse response1 = new ReportCardsResponse();
-        SingleReportCardData touristCardData=new SingleReportCardData();
-        SingleReportCardData packageCardData=new SingleReportCardData();
-        SingleReportCardData destinationCardData=new SingleReportCardData();
-        SingleReportCardData tourOperatorCardData=new SingleReportCardData();
-        SingleReportCardData employeeCardData=new SingleReportCardData();
-
-
+        SingleReportCardData touristCardData = new SingleReportCardData();
+        SingleReportCardData packageCardData = new SingleReportCardData();
+        SingleReportCardData destinationCardData = new SingleReportCardData();
+        SingleReportCardData tourOperatorCardData = new SingleReportCardData();
+        SingleReportCardData employeeCardData = new SingleReportCardData();
 
 
         touristCardData.setTitle("Tourists");
