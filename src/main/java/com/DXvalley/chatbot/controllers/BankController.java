@@ -1,4 +1,5 @@
 package com.DXvalley.chatbot.controllers;
+
 import com.DXvalley.chatbot.models.Bank;
 
 import com.DXvalley.chatbot.repository.BankRepository;
@@ -22,24 +23,17 @@ public class BankController {
     private BankService bankService;
     @Autowired
     private BankRepository bankRepository;
+
     @PostMapping("/registerBank")
     public ResponseEntity<?> createBank(@RequestBody Bank bank) {
-        Bank bank1=bankRepository.findByName(bank.getName());
-        BankController.ResponseMessage responseMessage;
-        if (bank1==null) {
-            bankService.registerBank(bank);
-            responseMessage = new BankController.ResponseMessage("success", "bank created successfully");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        }else {
-            responseMessage = new BankController.ResponseMessage("fail", "Bank's branch already exist");
-            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
-        }
+      return  bankService.registerBank(bank);
+
     }
+
     @GetMapping("/getBanks")
-    private ResponseEntity<?> fetchBanks(){
-        List<Bank> bank=bankService.fetchBanks();
-        return new ResponseEntity<>(bank,HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
+    private ResponseEntity<?> fetchBanks() {
+        List<Bank> bank = bankService.fetchBanks();
+        return new ResponseEntity<>(bank, HttpStatus.OK);
     }
 
 

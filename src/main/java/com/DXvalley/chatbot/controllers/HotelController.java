@@ -22,22 +22,13 @@ public class HotelController {
     private HotelRepository hotelRepository;
     @PostMapping("/registerHotel")
     public ResponseEntity<?> createHotel(@RequestBody Hotel hotel) {
-        Hotel hotel1=hotelRepository.findByName(hotel.getName());
-        HotelController.ResponseMessage responseMessage;
-        if (hotel1==null) {
-            hotelService.registerHotel(hotel);
-            responseMessage = new HotelController.ResponseMessage("success", "Hotel registered successfully");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        }else {
-            responseMessage = new HotelController.ResponseMessage("fail", "hotel already exist");
-            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
-        }
+        return  hotelService.registerHotel(hotel);
+
     }
     @GetMapping("/getHotels")
     private ResponseEntity<?> fetchHotels(){
         List<Hotel> hotel=hotelService.fetchHotels();
         return new ResponseEntity<>(hotel,HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
     }
     @GetMapping("/getHotel/{hotelId}")
     public ResponseEntity<?> getByHotelId(@PathVariable Long hotelId) {

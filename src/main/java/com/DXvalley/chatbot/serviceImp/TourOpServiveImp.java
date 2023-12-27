@@ -36,16 +36,16 @@ public class TourOpServiveImp implements TourOpService {
     @Override
     public ResponseEntity<?> registerTourOrg(Users tempUser) {
 
-        Users user =getUser();
+        Users user = getUser();
         List<Destination> destinations = new ArrayList<>();
 
 
-        var tourOp1 = tourOPRRepository.findByTinNum(tempUser.getTourOperator().getTinNum());
+        TourOperator tourOp1 = tourOPRRepository.findByTinNum(tempUser.getTourOperator().getTinNum());
         tourOpController.ResponseMessage responseMessage;
         if (tourOp1 == null) {
             Role role = roleRepository.findByRoleName("Tour Operator");
             List<Role> roles = new ArrayList<>();
-            TourOperator tourOperator=tempUser.getTourOperator();
+            TourOperator tourOperator = tempUser.getTourOperator();
             roles.add(role);
             destinations.add(user.getDestination());
             tourOperator.setDestinations(destinations);
@@ -59,7 +59,12 @@ public class TourOpServiveImp implements TourOpService {
             responseMessage = new tourOpController.ResponseMessage("success", "TourOperator Registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } else {
-            responseMessage = new tourOpController.ResponseMessage("fail", "TourOperator register fail");
+
+            destinations.addAll(tourOp1.getDestinations());
+            destinations.add(user.getDestination());
+            tourOp1.setDestinations(destinations);
+            tourOPRRepository.save(tourOp1);
+            responseMessage = new tourOpController.ResponseMessage("success", "Tour operator info updated");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
 
@@ -72,10 +77,24 @@ public class TourOpServiveImp implements TourOpService {
 
     @Override
     public List<TourOperator> fetchTourOperators() {
-        return tourOPRRepository.findAll();
+        Users user = getUser();
+        List<TourOperator> tourOperators = new ArrayList<>();
+        for (Role userRole :
+                user.getRoles()) {
+            String role = userRole.getRoleName();
+            if (role.equals("System Admin")) {
+                tourOperators.addAll(tourOPRRepository.findAll());
+            } else if (role.equals("admin")) {
+                String destinationName = user.getDestination().getName();
+                tourOperators.addAll(tourOPRRepository.findTourOperatorsAtDestination(destinationName));
+            } else {
+
+            }
+        }
+        return tourOperators;
     }
 
-    public  Users getUser() {
+    public Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Users user = userRepository.findByEmailOrUsername(username, username);

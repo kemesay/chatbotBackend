@@ -29,8 +29,8 @@ public class TourOperator {
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Destination> destinations;
 
-    public TourOperator(String tourOrgName, List<String> touristType, String ownerFullName, String ownerAddress, String email,
-                        String phoneNum, String foundAt, List<String> tourCategory, String tinNum) {
+    public TourOperator(String tourOrgName, List<String> touristType, String ownerFullName, String ownerAddress,
+                         String foundAt, List<String> tourCategory, String tinNum) {
         this.tourOrgName = tourOrgName;
         this.ownerFullName = ownerFullName;
         this.ownerAddress = ownerAddress;

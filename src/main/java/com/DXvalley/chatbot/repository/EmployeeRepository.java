@@ -20,7 +20,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     int countDestinationEmployees(Destination destination);
     @Query("SELECT COUNT(e) FROM Employee e WHERE e.destination.destinationId = :destinationId")
     int countEmployeesAtDestination(@Param("destinationId") Long destinationId);
-
+    @Query("SELECT e from Employee e WHERE e.destination.name = :destinationName")
+    List<Employee> findEmployeesAtDestination(String destinationName);
     @Query("SELECT e FROM Employee e ORDER BY e.registeredAt ASC")
     List<Employee> findFirstRegisteredEmployeeEntity();
 

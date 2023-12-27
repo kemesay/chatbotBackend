@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tourOper")
+@RequestMapping("/tourOperator")
 public class tourOpController {
     @Autowired
     private TourOpService tourOpService;
@@ -33,18 +33,15 @@ public class tourOpController {
     @Autowired
     private TourOPRRepository tourOPRRepository;
 
-    @PostMapping("/registerTourOrg")
+    @PostMapping("/registerTourOperator")
     public ResponseEntity<?> createTourOp(@RequestBody Users user) {
-
        return tourOpService.registerTourOrg(user);
-
     }
 
-    @GetMapping("/getTourOPs")
+    @GetMapping("/getTourOperators")
     private ResponseEntity<?> fetchTourOperators() {
         List<TourOperator> tourOperators = tourOpService.fetchTourOperators();
         return new ResponseEntity<>(tourOperators, HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
     }
 
     @GetMapping("/getTourOp/{tourOperatorId}")
@@ -60,7 +57,6 @@ public class tourOpController {
     @PutMapping("/edit/{tourOperatorId}")
     TourOperator editTourOp(@RequestBody TourOperator tourOperator, @PathVariable Long tourOperatorId) {
         TourOperator tourOperator1 = this.tourOPRRepository.findByTourOperatorId(tourOperatorId);
-
         tourOperator1.setTourOrgName(tourOperator.getTourOrgName());
         tourOperator1.setOwnerFullName(tourOperator.getOwnerFullName());
         tourOperator1.setOwnerAddress(tourOperator.getOwnerAddress());
@@ -74,8 +70,6 @@ public class tourOpController {
     void deleteTourOp(@PathVariable Long tourOperatorId) {
         this.tourOPRRepository.deleteById(tourOperatorId);
     }
-
-
     @Getter
     @Setter
     @AllArgsConstructor

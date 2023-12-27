@@ -55,7 +55,7 @@ public class ReportServiceImp implements ReportService {
                 employeeCounter = employeeRepository.countEmployeesAtDestination(destination.getDestinationId());
                 tourOperatorCounter = tourOpRepository.countTourOperatorsAtDestination(destination);
                 destinationCounter = destinationRepository.findAll().size();
-                packagesCounter = tourPackageRepository.findAll().size();
+                packagesCounter = tourPackageRepository.countPackagesAtDestination(destination.getName());
             } else {
 
             }

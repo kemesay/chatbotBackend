@@ -35,7 +35,6 @@ public class PackageController {
     private ResponseEntity<?> fetchPackages() {
         List<TourPackage> tourPackages = tourPackageService.fetchPackages();
         return new ResponseEntity<>(tourPackages, HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
     }
 
     @GetMapping("/getpackages/{packageId}")

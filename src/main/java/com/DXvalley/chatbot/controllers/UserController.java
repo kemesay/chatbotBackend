@@ -143,8 +143,8 @@ public class UserController {
 
     @PostMapping("/createUser")
     public ResponseEntity<createUserResponse> accept(@RequestBody Users tempUser) {
-//        Destination destination = destinationRepository.findByName(tempUser.getDestination().getName());
-        Destination destination = destinationRepository.findByDestinationId(tempUser.getDestination().getDestinationId());
+        Destination destination = destinationRepository.findByName(tempUser.getDestination().getName());
+//        Destination destination = destinationRepository.findByDestinationId(tempUser.getDestination().getDestinationId());
         if (destination == null) {
             createUserResponse response = new createUserResponse("error", "destination not found");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

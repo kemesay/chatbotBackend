@@ -51,10 +51,8 @@ public class TouristServiceIpm implements TouristService {
 
     @Override
     public ResponseEntity<?> getTouristGraphData() {
-        List<Tourist> touristList = touristRepository.findFirstRegisteredEntity();
         List<Tourist> allTourists = touristRepository.findAll();
-        Tourist firstTourist = touristList.get(0);
-        String startDate = firstTourist.getFirstVisitedDate();
+        String startDate = getStartDate();
         Collection<String> dates = new ArrayList<>();
 
         String inputDateStr = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -74,9 +72,6 @@ public class TouristServiceIpm implements TouristService {
             dates.add(nextDayString + "-00-00-00");
         }
         while (!nextDayString.equals(today));
-
-        Collection<Tourist> tourists = new ArrayList<>();
-        tourists.addAll(touristRepository.findAll());
 
         Collection<Object> fullData = new ArrayList<>();
         dates.forEach((date -> {
@@ -119,7 +114,7 @@ public class TouristServiceIpm implements TouristService {
                         allTourists) {
                     for (Visit visit :
                             tourist.getVisits()) {
-                        boolean isTouristAtTheDestination=visit.getDestination().getDestinationId().equals(user.getDestination().getDestinationId());
+                        boolean isTouristAtTheDestination = visit.getDestination().getDestinationId().equals(user.getDestination().getDestinationId());
                         if (isTouristAtTheDestination) {
                             touristsToReturn.add(tourist);
                         }
@@ -150,5 +145,32 @@ public class TouristServiceIpm implements TouristService {
         Instant instant = dateTime.toInstant(ZoneOffset.UTC);
 
         return instant.toEpochMilli();
+    }
+
+    private String getStartDate() {
+        Tourist firstTourist = null;
+        String startDate = "";
+        Users user = getUser();
+        for (Role role :
+                user.getRoles()) {
+            String userRole = role.getRoleName();
+            if (userRole.equals("admin")) {
+                firstTourist = touristRepository.findFirstRegisteredTouristAtDestination(user.getDestination().getName());
+                startDate = firstTourist.getFirstVisitedDate();
+                return startDate;
+            } else if (userRole.equals("System Admin")) {
+                firstTourist = touristRepository.findFirstRegisteredEntity();
+                startDate = firstTourist.getFirstVisitedDate();
+                return startDate;
+            }
+        }
+        return "";
+    }
+
+    public Users getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        return user;
     }
 }

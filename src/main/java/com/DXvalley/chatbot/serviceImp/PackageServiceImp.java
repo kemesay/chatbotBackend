@@ -2,6 +2,7 @@ package com.DXvalley.chatbot.serviceImp;
 
 import com.DXvalley.chatbot.controllers.tourOpController;
 import com.DXvalley.chatbot.models.*;
+import com.DXvalley.chatbot.repository.DestinationRepository;
 import com.DXvalley.chatbot.repository.TourPackageRepository;
 import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.TourPackageService;
@@ -25,6 +26,8 @@ public class PackageServiceImp implements TourPackageService {
     TourPackageRepository tourPackageRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private DestinationRepository destinationRepository;
 
     @Override
     public ResponseEntity<?> registerPackage(TourPackage tourPackage) {
@@ -35,7 +38,7 @@ public class PackageServiceImp implements TourPackageService {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             tourPackage.setCreatedAt(dateFormat.format(date));
             Users user = getUser();
-            List<Destination> destinations = new ArrayList<>();
+            List<Destination> tourDestinations = new ArrayList<>();
             for (Role role :
                     user.getRoles()) {
                 String userRole = role.getRoleName();
@@ -44,13 +47,31 @@ public class PackageServiceImp implements TourPackageService {
                 boolean isSuperAdmin = userRole.equals("System Admin");
                 if (isTourOperator) {
                     tourPackage.setPackageType(PackageType.TOUR_OPERATOR_PACKAGE);
+
+                    List<Destination> tourOperatorDestinations = user.getTourOperator().getDestinations();
+                    for (Destination tourOpetatordestination : tourOperatorDestinations
+                    ) {
+                        for (Destination tourDestination :
+                                tourPackage.getDestinations()) {
+                            if (tourOpetatordestination.getDestinationId().equals(tourDestination.getDestinationId())) {
+                                Destination managedDestination = destinationRepository.findById(tourDestination.getDestinationId()).orElse(null);
+                                if (managedDestination != null) {
+                                    tourDestinations.add(managedDestination);
+                                }
+                            }
+
+                        }
+
+                    }
+
                 } else if (isAdmin || isSuperAdmin) {
                     tourPackage.setPackageType(PackageType.DESTINATION_PACKAGE);
                     if (isAdmin) {
-                        destinations.add(user.getDestination());
-                        tourPackage.setDestinations(destinations);
+                        tourDestinations.add(user.getDestination());
+                        tourPackage.setDestinations(tourDestinations);
                     }
                 }
+                tourPackage.setDestinations(tourDestinations);
             }
             tourPackage.setPackageCreator(user);
             tourPackageRepository.save(tourPackage);
@@ -69,10 +90,25 @@ public class PackageServiceImp implements TourPackageService {
 
     @Override
     public List<TourPackage> fetchPackages() {
-        return tourPackageRepository.findAll();
+
+        Users user = getUser();
+        List<TourPackage> tourPackages = new ArrayList<>();
+        for (Role userRole :
+                user.getRoles()) {
+            String role = userRole.getRoleName();
+            if (role.equals("System Admin")) {
+                tourPackages.addAll(tourPackageRepository.findAll());
+            } else if (role.equals("admin")) {
+                String destinationName = user.getDestination().getName();
+                tourPackages.addAll(tourPackageRepository.findTourPackagesAtDestination(destinationName));
+            } else {
+
+            }
+        }
+        return tourPackages;
     }
 
-  public  Users getUser() {
+    public Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Users user = userRepository.findByEmailOrUsername(username, username);

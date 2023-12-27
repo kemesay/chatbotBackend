@@ -1,9 +1,6 @@
 package com.DXvalley.chatbot.controllers;
 
-import com.DXvalley.chatbot.models.Destination;
-import com.DXvalley.chatbot.models.Tourist;
-import com.DXvalley.chatbot.models.Users;
-import com.DXvalley.chatbot.models.Visit;
+import com.DXvalley.chatbot.models.*;
 import com.DXvalley.chatbot.repository.TouristRepository;
 import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.TouristService;
@@ -46,7 +43,6 @@ public class TouristController {
             Users user = userRepository.findByEmailOrUsername(username, username);
 
             Destination destination = user.getDestination();
-
             List<Visit> updatedVisits = existingTourist.getVisits();
 
             Visit addedVisit = new Visit();
@@ -136,8 +132,18 @@ public class TouristController {
     @PostMapping("/getAgeRangeCount")
     ArrayList<Integer> getAgeRangeCount(@RequestBody ArrayList<AgeRange> ageRanges) {
         ArrayList<Integer> arrayOfAgeRangeCount = new ArrayList<>();
+        Users user = getUser();
         ageRanges.forEach(ageRange -> {
-            arrayOfAgeRangeCount.add(touristRepository.findByAgeRangeCount(ageRange.getStart(), ageRange.getEnd()));
+            for (Role role :
+                    user.getRoles()) {
+                String userRole = role.getRoleName();
+                if (userRole.equals("admin")) {
+                    arrayOfAgeRangeCount.add(touristRepository.findByAgeRangeCountForDestination(ageRange.getStart(), ageRange.getEnd(), user.getDestination().getName()));
+                } else if (userRole.equals("System Admin")) {
+                    arrayOfAgeRangeCount.add(touristRepository.findByAgeRangeCount(ageRange.getStart(), ageRange.getEnd()));
+                }
+            }
+
         });
 
         return arrayOfAgeRangeCount;
@@ -145,11 +151,26 @@ public class TouristController {
 
     @GetMapping("/findFemaleAndMaleCount")
     Map<String, Long> findFemaleAndMaleCount() {
-        return touristRepository.findFemaleAndMaleCount();
+        Users user = getUser();
+        for (Role role :
+                user.getRoles()) {
+            String userRole = role.getRoleName();
+            if (userRole.equals("admin")) {
+                return touristRepository.findFemaleAndMaleCountForDestination(user.getDestination().getName());
+            } else if (userRole.equals("System Admin")) {
+                return touristRepository.findFemaleAndMaleCount();
+            }
+        }
+        return null;
     }
 
+    private Users getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        return user;
+    }
 }
-
 
 @Getter
 @Setter

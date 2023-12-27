@@ -30,9 +30,7 @@ public class EmployeeController {
         var employee1=employeeRepository.findByPhoneNum(employee.getPhoneNum());
         ResponseMessage responseMessage;
         if (employee1==null) {
-            Date date = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
-            employee.setRegisteredAt(dateFormat.format(date));
+
             employeeService.registerEmployee(employee);
             responseMessage = new ResponseMessage("success", "employee created successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -46,7 +44,6 @@ public class EmployeeController {
     private ResponseEntity<?> fetchEmployees(){
         List<Employee> employees=employeeService.fetchEmployee();
         return new ResponseEntity<>(employees,HttpStatus.OK);
-//        return new ResponseEntity<>(new createUserResponse("success","fetched"),HttpStatus.FOUND);
     }
     @GetMapping("/getEmployee/{employeeId}")
     public ResponseEntity<?> getByEmployeeId(@PathVariable Long employeeId) {

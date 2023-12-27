@@ -21,20 +21,34 @@ public interface TouristRepository extends JpaRepository<Tourist, Long> {
 
     Tourist findByEmailOrPassportId(String email, String passportId);
 
-    @Query("SELECT e FROM Tourist e ORDER BY e.firstVisitedDate ASC")
-    List<Tourist> findFirstRegisteredEntity();
+    @Query("SELECT e FROM Tourist e ORDER BY e.firstVisitedDate ASC LIMIT 1")
+    Tourist findFirstRegisteredEntity();
 
     @Query("SELECT COUNT(u) FROM Tourist u JOIN u.visits v WHERE v.destination = :destination")
     int countTouristsAtDestination(@Param("destination") Destination destination);
 
 
-
     @Query("SELECT COUNT(u) FROM Tourist u WHERE YEAR(CURRENT_DATE) - YEAR(TO_DATE(u.birthDate, 'yyyyMMdd')) BETWEEN ?1 AND ?2")
     Integer findByAgeRangeCount(int startAge, int endAge);
+
+//    @Query("SELECT COUNT(t) FROM Tourist t JOIN t.visits v WHERE v.destination.name = :destinationName AND  WHERE  YEAR(CURRENT_DATE) - YEAR(TO_DATE(t.birthDate, 'yyyyMMdd')) BETWEEN :startAge AND :endAge")
+//    Integer findByAgeRangeCountForDestination(int startAge, int endAge, String destinationName);
+
+    @Query("SELECT COUNT(t) FROM Tourist t JOIN t.visits v WHERE v.destination.name = :destinationName AND YEAR(CURRENT_DATE) - YEAR(TO_DATE(t.birthDate, 'yyyyMMdd')) BETWEEN :startAge AND :endAge")
+    Integer findByAgeRangeCountForDestination(@Param("startAge") int startAge, @Param("endAge") int endAge, @Param("destinationName") String destinationName);
 
     @Query("SELECT COUNT(CASE WHEN u.gender = 'Female' THEN 1 END) AS female_count, " +
             "COUNT(CASE WHEN u.gender = 'Male' THEN 1 END) AS male_count " +
             "FROM Tourist u")
     Map<String, Long> findFemaleAndMaleCount();
 
+
+    @Query("SELECT COUNT(CASE WHEN t.gender = 'Female' THEN 1 END) AS female_count, " +
+            "COUNT(CASE WHEN t.gender = 'Male' THEN 1 END) AS male_count " +
+            "FROM Tourist t JOIN t.visits v WHERE v.destination.name = :destinationName")
+    Map<String, Long> findFemaleAndMaleCountForDestination( String destinationName);
+
+
+    @Query("SELECT t FROM Tourist t  JOIN t.visits v WHERE v.destination.name = :destinationName ORDER BY t.firstVisitedDate ASC LIMIT 1")
+    Tourist findFirstRegisteredTouristAtDestination(String destinationName);
 }

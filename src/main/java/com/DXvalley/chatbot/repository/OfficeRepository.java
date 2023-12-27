@@ -12,7 +12,7 @@ public interface OfficeRepository extends JpaRepository<Office,Long> {
     Office findByName(String Name);
     Office findByOfficeId(Long officeId);
     @Query("SELECT o FROM Office o WHERE o.destination = :destination")
-    List<Office> findDestinationOffices(Destination destination);
+    List<Office> findOfficesAtDestination(Destination destination);
 
 
 }

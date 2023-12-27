@@ -26,12 +26,12 @@ public class Bank {
     private Destination destination;
 
 
-    public Bank(String name, String address ,String description, float latitude, float longitude){
-        this.name=name;
-        this.longitude=longitude;
-        this.description=description;
-        this.latitude=latitude;
-        this.address=address;
+    public Bank(String name, String address, String description, float latitude, float longitude) {
+        this.name = name;
+        this.longitude = longitude;
+        this.description = description;
+        this.latitude = latitude;
+        this.address = address;
     }
 
 }

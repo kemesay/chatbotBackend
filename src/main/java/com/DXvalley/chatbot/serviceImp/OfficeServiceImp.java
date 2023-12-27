@@ -23,9 +23,7 @@ public class OfficeServiceImp implements OfficeService {
 
     @Override
     public void registerOffice(Office office) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Users user = userRepository.findByEmailOrUsername(username, username);
+        Users user = getUser();
         office.setDestination(user.getDestination());
         officeRepository.save(office);
     }
@@ -46,10 +44,17 @@ public class OfficeServiceImp implements OfficeService {
             if (role.getRoleName().equals("System Admin")) {
                 offices.addAll(officeRepository.findAll());
             } else if (role.getRoleName().equals("admin")) {
-                offices.addAll(officeRepository.findDestinationOffices(user.getDestination()));
+                offices.addAll(officeRepository.findOfficesAtDestination(user.getDestination()));
             }
 
         }
         return offices;
+    }
+
+    private Users getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        return user;
     }
 }

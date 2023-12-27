@@ -36,7 +36,7 @@ public class DestinationServiceImp implements DestinationService {
     @Override
     public List<Destination> fetchDestinations() {
         Users user = getUser();
-        int i=0;
+        int i = 0;
         List<Destination> destinations = destinationRepository.findAll();
         List<Destination> destinationToReturn = new ArrayList<>();
         for (Role role :
@@ -46,16 +46,20 @@ public class DestinationServiceImp implements DestinationService {
                         destinations) {
                     for (Destination destToFilter :
                             user.getTourOperator().getDestinations()) {
-                        System.out.println(destToFilter.getName() + " vs " + destination.getName());
                         if (destToFilter.getName().equals(destination.getName())) {
                             i++;
                             destinationToReturn.add(destination);
                         }
                     }
                 }
-            } else return destinations;
+            } else if (role.getRoleName().equals("admin")) {
+                destinationToReturn.add(user.getDestination());
+                return destinationToReturn;
+            } else if (role.getRoleName().equals("System Admin")) {
+                return destinations;
+            }
+            ;
         }
-        System.out.println(i);
         return destinationToReturn;
     }
 

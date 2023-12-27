@@ -1,9 +1,6 @@
 package com.DXvalley.chatbot.serviceImp;
 
-import com.DXvalley.chatbot.models.Destination;
-import com.DXvalley.chatbot.models.Employee;
-import com.DXvalley.chatbot.models.Office;
-import com.DXvalley.chatbot.models.Users;
+import com.DXvalley.chatbot.models.*;
 import com.DXvalley.chatbot.repository.EmployeeRepository;
 import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.EmployeeService;
@@ -14,10 +11,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,10 +29,10 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public void registerEmployee(Employee employee) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Users user = userRepository.findByEmailOrUsername(username, username);
-        Destination destination = user.getDestination();
+        Destination destination = getUser().getDestination();
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+        employee.setRegisteredAt(dateFormat.format(date));
         employee.setDestination(destination);
         employeeRepository.save(employee);
     }
@@ -44,7 +44,21 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public List<Employee> fetchEmployee() {
-        return employeeRepository.findAll();
+        Users user = getUser();
+        List<Employee> employees = new ArrayList<>();
+        for (Role userRole :
+                user.getRoles()) {
+            String role = userRole.getRoleName();
+            if (role.equals("System Admin")) {
+                employees.addAll(employeeRepository.findAll());
+            } else if (role.equals("admin")) {
+                String destinationName = user.getDestination().getName();
+                employees.addAll(employeeRepository.findEmployeesAtDestination(destinationName));
+            } else {
+
+            }
+        }
+        return employees;
     }
 
     @Override
@@ -118,5 +132,12 @@ public class EmployeeServiceImp implements EmployeeService {
         Instant instant = dateTime.toInstant(ZoneOffset.UTC);
 
         return instant.toEpochMilli();
+    }
+
+    public Users getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Users user = userRepository.findByEmailOrUsername(username, username);
+        return user;
     }
 }
