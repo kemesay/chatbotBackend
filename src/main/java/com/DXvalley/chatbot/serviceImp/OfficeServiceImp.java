@@ -1,5 +1,6 @@
 package com.DXvalley.chatbot.serviceImp;
 
+import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Office;
 import com.DXvalley.chatbot.models.Role;
 import com.DXvalley.chatbot.models.Users;
@@ -35,14 +36,15 @@ public class OfficeServiceImp implements OfficeService {
 
     @Override
     public List<Office> fetchOffices() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Users user = userRepository.findByEmailOrUsername(username, username);
+
+        List<Office> office = officeRepository.findAll();
+
+        Users user = getUser();
         List<Office> offices = new ArrayList<>();
         for (Role role :
                 user.getRoles()) {
             if (role.getRoleName().equals("System Admin")) {
-                offices.addAll(officeRepository.findAll());
+                offices.addAll(office);
             } else if (role.getRoleName().equals("admin")) {
                 offices.addAll(officeRepository.findOfficesAtDestination(user.getDestination()));
             }

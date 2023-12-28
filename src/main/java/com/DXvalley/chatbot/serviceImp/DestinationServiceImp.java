@@ -36,44 +36,28 @@ public class DestinationServiceImp implements DestinationService {
     @Override
     public List<Destination> fetchDestinations() {
         Users user = getUser();
-        int i = 0;
         List<Destination> destinations = destinationRepository.findAll();
         List<Destination> destinationToReturn = new ArrayList<>();
-        for (Role role :
-                user.getRoles()) {
+
+        for (Role role : user.getRoles()) {
             if (role.getRoleName().equals("Tour Operator")) {
-                for (Destination destination :
-                        destinations) {
-                    for (Destination destToFilter :
-                            user.getTourOperator().getDestinations()) {
+                for (Destination destination : destinations) {
+                    for (Destination destToFilter : user.getTourOperator().getDestinations()) {
                         if (destToFilter.getName().equals(destination.getName())) {
-                            i++;
                             destinationToReturn.add(destination);
                         }
                     }
                 }
             } else if (role.getRoleName().equals("admin")) {
                 destinationToReturn.add(user.getDestination());
-                return destinationToReturn;
             } else if (role.getRoleName().equals("System Admin")) {
-                return destinations;
+                destinationToReturn.addAll(destinations);
             }
-            ;
         }
+
         return destinationToReturn;
     }
 
-    public List<Destination> fetchDestinations2() {
-        Users user = getUser();
-
-        List<Destination> destinations = destinationRepository.findAll();
-
-        return user.getRoles().stream()
-                .filter(role -> "Tour Operator".equals(role.getRoleName()))
-                .flatMap(role -> destinations.stream()
-                        .filter(destination -> user.getDestination().getName().equals(destination.getName())))
-                .collect(Collectors.toList());
-    }
 
     public Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
