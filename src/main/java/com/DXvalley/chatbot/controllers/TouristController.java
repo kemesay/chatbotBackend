@@ -164,6 +164,21 @@ public class TouristController {
         return null;
     }
 
+    @GetMapping("/findInternationalAndDemoCount")
+    Map<String, Long> findInternationalAndDemoCount() {
+        Users user = getUser();
+        for (Role role :
+                user.getRoles()) {
+            String userRole = role.getRoleName();
+            if (userRole.equals("admin")) {
+                return touristRepository.findInternationalAndDemosticCountForDestination(user.getDestination().getName());
+            } else if (userRole.equals("System Admin")) {
+                return touristRepository.findInternationalAndDemosticCount();
+            }
+        }
+        return null;
+    }
+
     private Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

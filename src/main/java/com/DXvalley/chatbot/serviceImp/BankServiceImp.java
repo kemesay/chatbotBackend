@@ -1,8 +1,5 @@
 package com.DXvalley.chatbot.serviceImp;
-
-import com.DXvalley.chatbot.controllers.BankController;
 import com.DXvalley.chatbot.models.Bank;
-import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Role;
 import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.BankRepository;
@@ -66,14 +63,12 @@ public class BankServiceImp implements BankService {
         }
         return banks;
     }
-
     private Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Users user = userRepository.findByEmailOrUsername(username, username);
         return user;
     }
-
 }
 
 @Getter

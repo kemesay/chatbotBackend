@@ -42,11 +42,20 @@ public interface TouristRepository extends JpaRepository<Tourist, Long> {
             "FROM Tourist u")
     Map<String, Long> findFemaleAndMaleCount();
 
-
+    @Query("SELECT COUNT(CASE WHEN u.touristType = 'International' THEN 1 END) AS international_count, " +
+            "COUNT(CASE WHEN u.touristType = 'Demostic' THEN 1 END) AS demostic_count " +
+            "FROM Tourist u")
+    Map<String, Long> findInternationalAndDemosticCount();
     @Query("SELECT COUNT(CASE WHEN t.gender = 'Female' THEN 1 END) AS female_count, " +
             "COUNT(CASE WHEN t.gender = 'Male' THEN 1 END) AS male_count " +
             "FROM Tourist t JOIN t.visits v WHERE v.destination.name = :destinationName")
     Map<String, Long> findFemaleAndMaleCountForDestination( String destinationName);
+
+    @Query("SELECT COUNT(CASE WHEN t.touristType = 'International' THEN 1 END) AS international_count, " +
+            "COUNT(CASE WHEN t.touristType = 'Demostic' THEN 1 END) AS demostic_count " +
+            "FROM Tourist t JOIN t.visits v WHERE v.destination.name = :destinationName")
+    Map<String, Long> findInternationalAndDemosticCountForDestination( String destinationName);
+
 
 
     @Query("SELECT t FROM Tourist t  JOIN t.visits v WHERE v.destination.name = :destinationName ORDER BY t.firstVisitedDate ASC LIMIT 1")
