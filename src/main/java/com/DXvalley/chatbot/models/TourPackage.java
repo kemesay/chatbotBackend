@@ -3,7 +3,6 @@ package com.DXvalley.chatbot.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -29,7 +28,7 @@ public class TourPackage {
     private String packageDescription;
     private String departureDates;
     private String createdAt;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Users packageCreator;
     @Enumerated(EnumType.STRING)
     private PackageType packageType;

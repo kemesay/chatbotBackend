@@ -10,5 +10,4 @@ public interface BankService {
     List<Bank> fetchBanks();
     Bank editBank (Bank bank);
     ResponseEntity<?> registerBank(Bank bank);
-
 }

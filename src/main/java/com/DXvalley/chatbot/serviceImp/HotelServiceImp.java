@@ -1,6 +1,4 @@
 package com.DXvalley.chatbot.serviceImp;
-
-import com.DXvalley.chatbot.models.Bank;
 import com.DXvalley.chatbot.models.Hotel;
 import com.DXvalley.chatbot.models.Role;
 import com.DXvalley.chatbot.models.Users;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.DXvalley.chatbot.DTO.ResponseMessage;
 
 @Service
@@ -41,16 +38,12 @@ public class HotelServiceImp implements HotelService {
         }
 
     }
-
     @Override
     public Hotel editHotel(Hotel hotel) {
         return this.hotelRepository.save(hotel);
     }
-
     @Override
     public List<Hotel> fetchHotels() {
-
-
         Users user = getUser();
         List<Hotel> hotels = new ArrayList<>();
         for (Role userRole :

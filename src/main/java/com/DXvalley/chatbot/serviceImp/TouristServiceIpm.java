@@ -1,5 +1,4 @@
 package com.DXvalley.chatbot.serviceImp;
-
 import com.DXvalley.chatbot.models.*;
 import com.DXvalley.chatbot.repository.TouristRepository;
 import com.DXvalley.chatbot.repository.UserRepository;
@@ -108,12 +107,11 @@ public class TouristServiceIpm implements TouristService {
             String userRole = role.getRoleName();
             if (userRole.equals("System Admin")) {
                 touristsToReturn = touristRepository.findAll();
-            } else if (userRole.equals("admin")) {
+            }
+            else if (userRole.equals("admin")) {
 
-                for (Tourist tourist :
-                        allTourists) {
-                    for (Visit visit :
-                            tourist.getVisits()) {
+                for (Tourist tourist : allTourists) {
+                    for (Visit visit : tourist.getVisits()) {
                         boolean isTouristAtTheDestination = visit.getDestination().getDestinationId().equals(user.getDestination().getDestinationId());
                         if (isTouristAtTheDestination) {
                             touristsToReturn.add(tourist);
@@ -122,13 +120,13 @@ public class TouristServiceIpm implements TouristService {
                 }
             }
         }
+        System.out.println(touristsToReturn);
         return touristsToReturn;
     }
 
     void addValue(Collection<Object> timestampVsValue, Collection<String> dates) {
 
     }
-
     Long getTimestamp(String visitedAt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
         LocalDateTime localDateTime = LocalDateTime.parse(visitedAt, formatter);
@@ -161,6 +159,7 @@ public class TouristServiceIpm implements TouristService {
             } else if (userRole.equals("System Admin")) {
                 firstTourist = touristRepository.findFirstRegisteredEntity();
                 startDate = firstTourist.getFirstVisitedDate();
+                System.out.println(startDate);
                 return startDate;
             }
         }

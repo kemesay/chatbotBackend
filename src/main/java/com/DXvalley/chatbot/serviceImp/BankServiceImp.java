@@ -70,7 +70,6 @@ public class BankServiceImp implements BankService {
         return user;
     }
 }
-
 @Getter
 @Setter
 @AllArgsConstructor

@@ -1,5 +1,4 @@
 package com.DXvalley.chatbot.DTO;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

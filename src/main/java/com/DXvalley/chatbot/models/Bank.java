@@ -22,7 +22,7 @@ public class Bank {
     private float longitude;
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Destination destination;
 
 

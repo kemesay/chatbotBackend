@@ -1,6 +1,5 @@
 package com.DXvalley.chatbot.serviceImp;
 
-import com.DXvalley.chatbot.models.Bank;
 import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Role;
 import com.DXvalley.chatbot.models.Users;
@@ -11,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DestinationServiceImp implements DestinationService {
@@ -54,10 +51,8 @@ public class DestinationServiceImp implements DestinationService {
                 destinationToReturn.addAll(destinations);
             }
         }
-
         return destinationToReturn;
     }
-
 
     public Users getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
