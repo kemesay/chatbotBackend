@@ -23,7 +23,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         Users user = userRepository.findByEmailOrUsername(usernameOrEmail, usernameOrEmail);
-        if (user != null && user.getIsEnabled()) {
+        System.out.println("ttttttttttttttt"+user);
+        if (user != null && user.getIsActive()) {
 
             Collection<SimpleGrantedAuthority> authorities;
 

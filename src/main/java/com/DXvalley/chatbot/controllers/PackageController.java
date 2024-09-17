@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -50,15 +50,21 @@ public class PackageController {
     @PutMapping("/edit/{packageId}")
     TourPackage editTourPackage(@RequestBody TourPackage tourPackage, @PathVariable Long packageId) {
         TourPackage tourPackage1 = this.tourPackageRepository.findByPackageId(packageId);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        tourPackage1.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
         tourPackage1.setPackageName(tourPackage.getPackageName());
         tourPackage1.setPackageDescription(tourPackage.getPackageDescription());
-//        tourPackage1.setDestination(tourPackage.getDestination());
+        tourPackage1.setDestinations(tourPackage.getDestinations());
+        tourPackage1.setTouristType(tourPackage.getTouristType());
+        tourPackage1.setPackageForDorInter(tourPackage.getPackageForDorInter());
         tourPackage1.setDepartureDates(tourPackage.getDepartureDates());
         tourPackage1.setMaxGroup(tourPackage.getMaxGroup());
         tourPackage1.setPackagePricePerPerson(tourPackage.getPackagePricePerPerson());
         tourPackage1.setStayDuration(tourPackage.getStayDuration());
         tourPackage1.setTourOperator(tourPackage.getTourOperator());
+        System.err.println("Here Here Here"+tourPackage1);
         return tourPackageService.editTourPackage(tourPackage1);
+
     }
 
     @DeleteMapping("/delete/package/{packageId}")

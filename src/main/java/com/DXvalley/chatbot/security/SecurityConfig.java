@@ -23,30 +23,18 @@ import java.security.PrivateKey;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration
 @EnableWebSecurity
+@Configuration
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final UserService userService;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private  final PasswordEncoder passwordEncoder;
     @Autowired
-    public SecurityConfig(
-            CustomUserDetailsService customUserDetailsService,
-            PasswordEncoder passwordEncoder,
-            UserService userService,
-            AuthenticationConfiguration authenticationConfiguration,
-            OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
-            CustomOAuth2UserService customOAuth2UserService) {
-        this.customUserDetailsService = customUserDetailsService;
+    public SecurityConfig(PasswordEncoder passwordEncoder,AuthenticationConfiguration authenticationConfiguration, CustomUserDetailsService customUserDetailsService ){
         this.passwordEncoder = passwordEncoder;
-        this.userService=userService;
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.oAuth2LoginSuccessHandler=oAuth2LoginSuccessHandler;
+        this.authenticationConfiguration= authenticationConfiguration;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
@@ -58,27 +46,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests(authorize -> {
-                    authorize
-                            .requestMatchers("/oauth2/**").permitAll()
-                            .requestMatchers("/**").permitAll() // Allow access to login endpoints
-//                            .requestMatchers("/dashboard/**").authenticated()
-                            .anyRequest().permitAll();
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/**").permitAll();
+                    // Uncomment the following line to restrict access to certain endpoints
+                    // auth.requestMatchers("/manageAdmins/**").hasAuthority("System Admin");
                 })
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
-                        )
-                        .successHandler(oAuth2LoginSuccessHandler)
-                )
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration)))
                 .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .formLogin(withDefaults()) // Add form login if needed
                 .build();
     }
 

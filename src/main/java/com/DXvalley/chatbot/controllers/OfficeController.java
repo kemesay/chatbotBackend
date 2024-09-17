@@ -1,21 +1,17 @@
 package com.DXvalley.chatbot.controllers;
 import com.DXvalley.chatbot.models.Office;
-import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.OfficeRepository;
-import com.DXvalley.chatbot.repository.UserRepository;
-import com.DXvalley.chatbot.security.SecurityConfig;
 import com.DXvalley.chatbot.service.OfficeService;
-import com.nimbusds.jose.proc.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -33,6 +29,9 @@ public class OfficeController {
         Office office1=officeRepository.findByName(office.getName());
         OfficeController.ResponseMessage responseMessage;
         if (office1==null) {
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            office.setCreateAt(LocalDateTime.now().format(dateTimeFormatter));
             officeService.registerOffice(office);
             responseMessage = new OfficeController.ResponseMessage("success", "Office created successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -58,6 +57,8 @@ public class OfficeController {
     @PutMapping("/edit/{officeId}")
     Office e(@RequestBody Office office, @PathVariable Long officeId) {
         Office office1 = this.officeRepository.findByOfficeId(officeId);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        office1.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
         office1.setName(office.getName());
         office1.setAddress(office.getAddress());
         office1.setLatitude(office.getLatitude());

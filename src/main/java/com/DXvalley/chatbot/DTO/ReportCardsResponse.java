@@ -1,7 +1,6 @@
 package com.DXvalley.chatbot.DTO;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 

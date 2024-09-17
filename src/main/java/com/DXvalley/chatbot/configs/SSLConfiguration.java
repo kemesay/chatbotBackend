@@ -1,6 +1,5 @@
 package com.DXvalley.chatbot.configs;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -14,7 +13,7 @@ import java.security.cert.X509Certificate;
 @Configuration
 public class SSLConfiguration {
 
-    @Bean
+//    @Bean
     public void disableCertificateVerification() {
         try {
             // Create a trust manager that trusts all certificates

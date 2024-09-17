@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,18 +27,20 @@ public class TourPackage {
     private String packageDescription;
     private String departureDates;
     private String createdAt;
-    @ManyToOne(cascade = CascadeType.ALL)
+    private String updatedAt;
+
+    @ManyToOne
     private Users packageCreator;
     @Enumerated(EnumType.STRING)
     private PackageType packageType;
-    @NotNull
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Destination> destinations;
+//    @NotNull
+    @ManyToMany
+    private List<Destination> destinations = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     private Collection<TourOperator> tourOperator = new ArrayList<>();
 
-    public TourPackage(String maxGroup, List<String> packageForDorInter, List<String> touristType, String packageDescription, String departureDates, String createdAt,
+    public TourPackage(String maxGroup, List<String> packageForDorInter, List<String> touristType, String updatedAt, String packageDescription, String departureDates, String createdAt,
                        String packagePricePerPerson, String stayDuration, String packageName) {
         this.packageName = packageName;
         this.stayDuration = stayDuration;
@@ -48,6 +49,7 @@ public class TourPackage {
         this.packageDescription = packageDescription;
         this.departureDates = departureDates;
         this.createdAt = createdAt;
+        this.updatedAt= updatedAt;
         this.touristType = touristType;
         this.packageForDorInter = packageForDorInter;
     }

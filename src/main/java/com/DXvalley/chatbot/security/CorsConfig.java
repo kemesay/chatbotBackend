@@ -10,12 +10,13 @@ public class CorsConfig  implements  WebMvcConfigurer{
         registry.addViewController("/403").setViewName("403");
         registry.addViewController("/login").setViewName("login");
     }
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedOrigins("*") // Allow all origins
+                .allowedMethods("*") // Allow all HTTP methods
+                .allowedHeaders("*") // Allow all headers
+                .exposedHeaders("*");
     }
 
 }

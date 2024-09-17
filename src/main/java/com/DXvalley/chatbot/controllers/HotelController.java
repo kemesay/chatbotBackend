@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -43,6 +45,9 @@ public class HotelController {
     @PutMapping("/edit/{hotelId}")
     Hotel editHotel(@RequestBody Hotel hotel, @PathVariable Long hotelId) {
         Hotel hotel1 = this.hotelRepository.findByHotelId(hotelId);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        hotel1.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
         hotel1.setName(hotel.getName());
         hotel1.setAddress(hotel.getAddress());
         hotel1.setDescription(hotel.getDescription());

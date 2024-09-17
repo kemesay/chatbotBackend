@@ -12,5 +12,5 @@ public interface TouristService {
     List<Tourist> fetchTourists();
     Tourist editTourist (Tourist tourist);
 
-    ResponseEntity<?> getTouristGraphData();
+    ResponseEntity<?> getTouristGraphData(String duration);
 }

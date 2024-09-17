@@ -4,17 +4,14 @@ import com.DXvalley.chatbot.repository.EmployeeRepository;
 import com.DXvalley.chatbot.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -58,6 +55,8 @@ public class EmployeeController {
     @PutMapping("/edit/{employeeId}")
     Employee editEmployee(@RequestBody Employee employee, @PathVariable Long employeeId) {
         Employee employee1 = this.employeeRepository.findByEmployeeId(employeeId);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        employee1.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
         employee1.setFirstName(employee.getFirstName());
         employee1.setLastName(employee.getLastName());
         employee1.setMiddleName(employee.getMiddleName());

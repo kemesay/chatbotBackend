@@ -10,7 +10,6 @@ public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long feedbackId;
-
     private String first_name;
     private String last_name;
     private String email;

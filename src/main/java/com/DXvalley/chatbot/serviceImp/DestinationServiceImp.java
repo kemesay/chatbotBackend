@@ -2,6 +2,7 @@ package com.DXvalley.chatbot.serviceImp;
 
 import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.models.Role;
+import com.DXvalley.chatbot.models.TourOperator;
 import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.DestinationRepository;
 import com.DXvalley.chatbot.repository.UserRepository;
@@ -32,6 +33,8 @@ public class DestinationServiceImp implements DestinationService {
 
     @Override
     public List<Destination> fetchDestinations() {
+        TourOperator tourOperator = new TourOperator();
+
         Users user = getUser();
         List<Destination> destinations = destinationRepository.findAll();
         List<Destination> destinationToReturn = new ArrayList<>();
@@ -39,7 +42,7 @@ public class DestinationServiceImp implements DestinationService {
         for (Role role : user.getRoles()) {
             if (role.getRoleName().equals("Tour Operator")) {
                 for (Destination destination : destinations) {
-                    for (Destination destToFilter : user.getTourOperator().getDestinations()) {
+                    for (Destination destToFilter : tourOperator.getDestinations()) {
                         if (destToFilter.getName().equals(destination.getName())) {
                             destinationToReturn.add(destination);
                         }

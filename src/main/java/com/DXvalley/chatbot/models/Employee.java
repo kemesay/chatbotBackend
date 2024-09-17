@@ -23,16 +23,14 @@ public class Employee {
     private String phoneNum;
     private String address;
     private String gender;
-
-    private String registeredAt;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Destination destination;
-
+    private String createAt;
+    private String updatedAt;
     private String birthDate;
     private Boolean isActive;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToOne
+    private Destination destination;
+    @ManyToMany
     private Collection<Office> office = new ArrayList<>();
 
 }

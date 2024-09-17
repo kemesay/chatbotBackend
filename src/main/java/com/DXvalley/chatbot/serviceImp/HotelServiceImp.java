@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import com.DXvalley.chatbot.DTO.ResponseMessage;
@@ -28,6 +30,9 @@ public class HotelServiceImp implements HotelService {
         Hotel hotel1 = hotelRepository.findByName(hotel.getName());
         ResponseMessage responseMessage;
         if (hotel1 == null) {
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            hotel.setCreateAt(LocalDateTime.now().format(dateTimeFormatter));
             hotel.setDestination(getUser().getDestination());
             hotelRepository.save(hotel);
             responseMessage = new ResponseMessage("success", "Bank created successfully");

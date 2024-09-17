@@ -18,16 +18,21 @@ public class Office {
     private String name;
     private float longitude;
     private String description;
+    private String createAt;
+    private String updatedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne
     private Destination destination;
 
-    public Office(String address, String description, float longitude,  float latitude, String name){
+    public Office(String address,String createAt, String updatedAt, String description, float longitude,  float latitude, String name){
         this.address=address;
         this.description=description;
         this.name= name;
         this.latitude= latitude;
         this.longitude=longitude;
+        this.createAt=createAt;
+        this.updatedAt=updatedAt;
 
     }
 

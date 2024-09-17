@@ -1,7 +1,5 @@
 package com.DXvalley.chatbot.controllers;
-
 import com.DXvalley.chatbot.models.Bank;
-
 import com.DXvalley.chatbot.repository.BankRepository;
 import com.DXvalley.chatbot.service.BankService;
 import lombok.AllArgsConstructor;
@@ -13,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/bank")
 public class BankController {
     @Autowired
-    private BankService bankService;
+ final private BankService bankService;
     @Autowired
     private BankRepository bankRepository;
 
@@ -41,7 +41,7 @@ public class BankController {
     public ResponseEntity<?> getByBankId(@PathVariable Long bankId) {
         var bank = bankRepository.findByBankId(bankId);
         if (bank == null) {
-            createUserResponse response = new createUserResponse("error", "Cannot find this bank!");
+            ResponseMessage response = new ResponseMessage("error", "Cannot find this bank!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
@@ -56,6 +56,8 @@ public class BankController {
         bank1.setDescription(bank.getDescription());
         bank1.setLatitude(bank.getLatitude());
         bank1.setLongitude(bank.getLongitude());
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        bank1.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
         return bankService.editBank(bank1);
     }
 

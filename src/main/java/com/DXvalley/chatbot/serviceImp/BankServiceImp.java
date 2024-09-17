@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,8 @@ public class BankServiceImp implements BankService {
         Bank bank1 = bankRepository.findByName(bank.getName());
         ResponseMessage responseMessage;
         if (bank1 == null) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            bank.setCreateAt(LocalDateTime.now().format(dateTimeFormatter));
             bank.setDestination(getUser().getDestination());
             bankRepository.save(bank);
             responseMessage = new ResponseMessage("success", "bank created successfully");

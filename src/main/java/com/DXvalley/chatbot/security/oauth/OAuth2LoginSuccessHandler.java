@@ -28,7 +28,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
          // Register new Users
             newUser.setEmail(email);
             newUser.setProvider(Provider.GOOGLE);
-            newUser.setIsEnabled(false);
+            newUser.setIsActive(false);
             newUser.setFullName(name);
             userRepository.save(newUser);
 

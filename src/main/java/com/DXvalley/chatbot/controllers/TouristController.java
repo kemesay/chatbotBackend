@@ -1,5 +1,5 @@
 package com.DXvalley.chatbot.controllers;
-
+import com.DXvalley.chatbot.exception.customException.ResourceNotFoundException;
 import com.DXvalley.chatbot.models.*;
 import com.DXvalley.chatbot.repository.TouristRepository;
 import com.DXvalley.chatbot.repository.UserRepository;
@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tourist")
@@ -49,9 +52,8 @@ public class TouristController {
             Date date = new Date();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
             addedVisit.setVisitedAt(dateFormat.format(date));
-            addedVisit.setDurationOfStay(tourist.getVisits().get(0).getDurationOfStay());
+//            addedVisit.setDurationOfStay(tourist.getVisits().get(0).getDurationOfStay());
             addedVisit.setDestination(destination);
-
             updatedVisits.add(addedVisit);
             existingTourist.setVisits(updatedVisits);
             touristRepository.save(existingTourist);
@@ -78,37 +80,50 @@ public class TouristController {
     }
 
     @PutMapping("/edit/{touristId}")
-    Tourist editTourist(@RequestBody Tourist updatedTourist, @PathVariable Long touristId) {
+    public Tourist editTourist(@RequestBody Tourist updatedTourist, @PathVariable Long touristId) {
+        // Step 1: Retrieve the existing tourist and their visits from the database
         Tourist existingTourist = this.touristRepository.findByTouristId(touristId);
+        if (existingTourist == null) {
+            // Handle case where tourist is not found
+            throw new ResourceNotFoundException("Tourist not found with id " + touristId);
+        }
+
+        // Step 2: Retrieve existing and updated visits
         List<Visit> existingVisits = existingTourist.getVisits();
         List<Visit> updatedVisits = updatedTourist.getVisits();
 
+        // Step 3: Update only the durationOfStay in the existing visits
         for (Visit updatedVisit : updatedVisits) {
             for (Visit existingVisit : existingVisits) {
                 if (existingVisit.getVisitId().equals(updatedVisit.getVisitId())) {
+                    // Update only the durationOfStay field
                     existingVisit.setDurationOfStay(updatedVisit.getDurationOfStay());
+                    break; // No need to check other visits once the match is found
                 }
             }
         }
 
-        // Set the updated visits to the existing tourist
+        // Step 4: Set the updated visits back to the existing tourist
         existingTourist.setVisits(existingVisits);
-
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        existingTourist.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
+        // Update other fields as necessary
         existingTourist.setTouristType(updatedTourist.getTouristType());
+        existingTourist.setTourCategory(updatedTourist.getTourCategory());
         existingTourist.setCity(updatedTourist.getCity());
         existingTourist.setGender(updatedTourist.getGender());
         existingTourist.setEmail(updatedTourist.getEmail());
         existingTourist.setZipcode(updatedTourist.getZipcode());
-        existingTourist.setCountry(updatedTourist.getTouristType());
-        existingTourist.setCity(updatedTourist.getCity());
-        existingTourist.setFullName(updatedTourist.getGender());
-//        tourist1.setDurationOfStay(tourist.getEmail());
+        existingTourist.setCountry(updatedTourist.getCountry());
+        existingTourist.setSubCity(updatedTourist.getSubCity());
+        existingTourist.setFullName(updatedTourist.getFullName());
         existingTourist.setBirthDate(updatedTourist.getBirthDate());
-//        tourist1.setDestination(tourist.getDestination());
         existingTourist.setPassportId(updatedTourist.getPassportId());
-        touristRepository.save(existingTourist);
-        return null;
+
+        // Step 5: Save the updated tourist back to the repository
+        return touristRepository.save(existingTourist);
     }
+
 
     @DeleteMapping("/delete/tourist/{touristId}")
     void deleteTourist(@PathVariable Long touristId) {
@@ -116,8 +131,8 @@ public class TouristController {
     }
 
     @GetMapping("/get-tourist-graph-data")
-    ResponseEntity<?> getTouristGraphData() {
-        return touristService.getTouristGraphData();
+    public ResponseEntity<?> getTouristGraphData(@RequestParam(name = "duration", defaultValue = "all") String duration) {
+        return touristService.getTouristGraphData(duration);
     }
 
     @Getter

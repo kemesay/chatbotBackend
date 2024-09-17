@@ -18,6 +18,8 @@ public class Bank {
     private Long bankId;
     private String name;
     private String address;
+    private  String createAt;
+    private  String updatedAt;
     private float latitude;
     private float longitude;
     private String description;
@@ -26,8 +28,10 @@ public class Bank {
     private Destination destination;
 
 
-    public Bank(String name, String address, String description, float latitude, float longitude) {
+    public Bank(String name, String createAt, String updatedAt, String address, String description, float latitude, float longitude) {
         this.name = name;
+        this.createAt=createAt;
+        this.updatedAt=updatedAt;
         this.longitude = longitude;
         this.description = description;
         this.latitude = latitude;

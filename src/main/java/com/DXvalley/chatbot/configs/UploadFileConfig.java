@@ -1,6 +1,4 @@
 package com.DXvalley.chatbot.configs;
-
-
 import com.cloudinary.Cloudinary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

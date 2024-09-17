@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -27,6 +29,8 @@ public class DestinationController {
         Destination destination1 = destinationRepository.findByName(destination.getName());
         DestinationController.ResponseMessage responseMessage;
         if (destination1 == null) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            destination.setCreateAt(LocalDateTime.now().format(dateTimeFormatter));
             destinationService.registerDestination(destination);
             responseMessage = new DestinationController.ResponseMessage("success", "Destination registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -57,6 +61,8 @@ public class DestinationController {
     @PutMapping("/edit/{destinationId}")
     Destination editDestination(@RequestBody Destination destination, @PathVariable Long destinationId) {
         Destination destination1 = this.destinationRepository.findByDestinationId(destinationId);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        destination1.setUpdatedAt(LocalDateTime.now().format(dateTimeFormatter));
         destination1.setName(destination.getName());
         destination1.setAddress(destination.getAddress());
         destination1.setDescription(destination.getDescription());

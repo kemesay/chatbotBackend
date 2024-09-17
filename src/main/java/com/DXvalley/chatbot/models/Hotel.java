@@ -19,14 +19,18 @@ public class Hotel {
     private float longitude;
     private String address;
     private String description;
+    private String createAt;
+    private String updatedAt;
     @ManyToOne(cascade = CascadeType.ALL)
     private Destination destination;
-    public Hotel(String name, String address ,String description, float latitude, float longitude){
+    public Hotel(String name, String createAt, String updatedAt ,String address ,String description, float latitude, float longitude){
         this.name=name;
         this.address=address;
         this.description=description;
         this.longitude=longitude;
         this.latitude=latitude;
+        this.createAt =createAt;
+        this.updatedAt =updatedAt;
 
 
     }

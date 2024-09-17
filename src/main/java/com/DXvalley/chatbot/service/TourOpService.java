@@ -7,9 +7,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface TourOpService {
-    ResponseEntity<?> registerTourOrg(Users user);
-
+    ResponseEntity<?> registerTourOrg(TourOperator tourOperator);
     List<TourOperator> fetchTourOperators();
-    TourOperator editTourOp (TourOperator tourOperator);
+    TourOperator editTourOp(TourOperator tourOperator);
+    // Additional methods...
 }
-

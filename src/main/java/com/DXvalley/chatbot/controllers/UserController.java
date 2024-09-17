@@ -1,59 +1,47 @@
 package com.DXvalley.chatbot.controllers;
-
-import com.DXvalley.chatbot.models.Destination;
-import com.DXvalley.chatbot.models.Role;
-import com.DXvalley.chatbot.repository.DestinationRepository;
-import com.DXvalley.chatbot.repository.TouristRepository;
-import com.DXvalley.chatbot.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.nio.file.AccessDeniedException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
 import com.DXvalley.chatbot.DTO.PasswordChangeDTO;
+import com.DXvalley.chatbot.DTO.ResetPassword;
 import com.DXvalley.chatbot.DTO.UserProfileDTO;
+import com.DXvalley.chatbot.exception.customException.ResourceNotFoundException;
+import com.DXvalley.chatbot.models.Role;
+import com.DXvalley.chatbot.models.Users;
+import com.DXvalley.chatbot.repository.RoleRepository;
+import com.DXvalley.chatbot.repository.UserRepository;
 import com.DXvalley.chatbot.service.EmailService;
 import com.DXvalley.chatbot.service.FileUploadService;
+import com.DXvalley.chatbot.service.UserService;
+import com.DXvalley.chatbot.serviceImp.UserServiceIm;
+import com.DXvalley.chatbot.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-
-
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import com.DXvalley.chatbot.models.Users;
-import com.DXvalley.chatbot.repository.RoleRepository;
-import com.DXvalley.chatbot.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/manageAdmins")
+@Tag(name = "User APIs.")
+@RequestMapping("/api/v1/user")
+//@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class UserController {
     @Autowired
     private final UserRepository userRepository;
-
-    @Autowired
-    private final TouristRepository touristRepository;
-
-    @Autowired
-    private final DestinationRepository destinationRepository;
     @Autowired
     private final RoleRepository roleRepo;
     @Autowired
@@ -64,6 +52,10 @@ public class UserController {
     private UserService userService;
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    UserServiceIm userServiceImp;
+
 
     private boolean isSysAdmin() {
         AtomicBoolean hasSysAdmin = new AtomicBoolean(false);
@@ -80,7 +72,6 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findByUsername((String) auth.getPrincipal()).getUsername().equals(userName);
     }
-
 
     @GetMapping("/getUsers")
     List<Users> getUsers() {
@@ -116,7 +107,6 @@ public class UserController {
             createUserResponse response = new createUserResponse("error", "Cannot find this user!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -143,12 +133,6 @@ public class UserController {
 
     @PostMapping("/createUser")
     public ResponseEntity<createUserResponse> accept(@RequestBody Users tempUser) {
-        Destination destination = destinationRepository.findByName(tempUser.getDestination().getName());
-//        Destination destination = destinationRepository.findByDestinationId(tempUser.getDestination().getDestinationId());
-        if (destination == null) {
-            createUserResponse response = new createUserResponse("error", "destination not found");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
 
         var user = userRepository.findByUsername(tempUser.getUsername());
         String password;
@@ -160,11 +144,11 @@ public class UserController {
 
         tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName())).collect(Collectors.toList()));
         password = tempUser.getPassword();
+        System.err.println("Destination"+tempUser.getDestination()+"Roles:"+tempUser.getRoles());
         tempUser.setPassword(passwordEncoder.encode(tempUser.getPassword()));
-        tempUser.setDestination(destination);
         tempUser.setFullName(tempUser.getFullName());
         tempUser.setCreatedAt(LocalDateTime.now().format(dateTimeFormatter));
-        System.out.println(tempUser.getUsername() + password);
+//        System.out.println(tempUser.getUsername() + password);
         tempUser.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
         tempUser.setCoverImgUrl("http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
         userRepository.save(tempUser);
@@ -217,7 +201,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/uploadProfileImg/{userNameOrEmail}")
+        @PutMapping("/uploadProfileImg/{userNameOrEmail}")
     public ResponseEntity<?> uploadProfileImg(@RequestParam MultipartFile profileImg, @PathVariable String userNameOrEmail) {
         String profileImgUrl = null;
         createUserResponse response;
@@ -275,7 +259,7 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } else {
             user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
-
+//            System.err.println("uuuuu:"+user.getEmail());
             emailService.sendEmail(user.getEmail(), "password changed!", user.getFullName(), "PASSWORD_CHANGED", null, null);
             userRepository.save(user);
             response = new pinchangeResponse("Password Change successfully");
@@ -299,7 +283,7 @@ public class UserController {
 
     }
 
-    @PutMapping("/manageAccount/{userName}/{usernameChange}")
+    @PutMapping("/{userName}/{usernameChange}")
     public Users manageAccount(@RequestBody UsernamePassword temp,
                                @PathVariable String userName,
                                @PathVariable Boolean usernameChange) throws AccessDeniedException {
@@ -317,25 +301,27 @@ public class UserController {
         } else
             throw new AccessDeniedException("403 Forbidden");
     }
-
-    @PutMapping("/edit/{userId}")
+    @PutMapping("/{userId}")
     Users editUser(@RequestBody Users users, @PathVariable Long userId) {
         Users existingUser = this.userRepository.findByUserId(userId);
 
         if (existingUser != null) {
             // Update the fields of the existing user
-            existingUser.setUsername(users.getUsername());
+//            existingUser.setUsername(users.getUsername());
 //            existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
 //            existingUser.setPassword(users.getPassword());
             existingUser.setFullName(users.getFullName());
             existingUser.setEmail(users.getEmail());
             existingUser.setGender(users.getGender());
-            existingUser.setTwoFactorEnabled(users.getTwoFactorEnabled());
-            existingUser.setIsEnabled(users.getIsEnabled());
-            existingUser.setPhoneNum(users.getPhoneNum());
-
+            existingUser.setDestination(users.getDestination());
+            existingUser.setTourOperator(users.getTourOperator());
+            existingUser.setPhoneNumber(users.getPhoneNumber());
             existingUser.setBirthDate(users.getBirthDate());
-
+            existingUser.setDescription(users.getDescription());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = localDateTime.format(formatter);
+            existingUser.setUpdatedAt(formattedDateTime);
             // Update the address
             existingUser.setAddress(users.getAddress());
 
@@ -362,15 +348,35 @@ public class UserController {
         }
     }
 
-
-    @DeleteMapping("/delete/user/{userId}")
-    void deleteUser(@PathVariable Long userId) {
-        this.userRepository.deleteById(userId);
+    @PutMapping("/{userId}/toggle-status")
+    public Users toggleStatus(@PathVariable Long userId) {
+        Users existingUser = this.userRepository.findByUserId(userId);
+        if (existingUser != null) {
+            existingUser.setIsActive(!existingUser.getIsActive());
+            return userRepository.save(existingUser);
+        } else {
+            // Optionally, you can throw a custom exception
+            throw new ResourceNotFoundException("User not found with id " + userId);
+        }
     }
 
 
-}
+    @PostMapping({"/forgotPassword/{username}"})
+    ResponseEntity<ApiResponse> forgotPassword(@PathVariable String username) {
+        return userService.forgotPassword(username);
+    }
 
+    @PutMapping({"/resetPassword"})
+    ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPassword resetPassword) {
+        return userService.resetPassword(resetPassword);
+    }
+
+
+    @DeleteMapping("/{userId}")
+    void deleteUser(@PathVariable Long userId) {
+        this.userRepository.deleteById(userId);
+    }
+}
 
 @Getter
 @Setter

@@ -32,7 +32,7 @@ public class EmployeeServiceImp implements EmployeeService {
         Destination destination = getUser().getDestination();
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
-        employee.setRegisteredAt(dateFormat.format(date));
+        employee.setCreateAt(dateFormat.format(date));
         employee.setDestination(destination);
         employeeRepository.save(employee);
     }
@@ -41,7 +41,6 @@ public class EmployeeServiceImp implements EmployeeService {
     public Employee editEmployee(Employee employee) {
         return this.employeeRepository.save(employee);
     }
-
     @Override
     public List<Employee> fetchEmployee() {
         Users user = getUser();
@@ -66,7 +65,7 @@ public class EmployeeServiceImp implements EmployeeService {
         List<Employee> employeeList = employeeRepository.findFirstRegisteredEmployeeEntity();
         List<Employee> allEmployees = employeeRepository.findAll();
         Employee firstEmployee = employeeList.get(0);
-        String startDate = firstEmployee.getRegisteredAt();
+        String startDate = firstEmployee.getCreateAt();
         Collection<String> dates = new ArrayList<>();
 
         String inputDateStr = LocalDateTime.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -98,7 +97,7 @@ public class EmployeeServiceImp implements EmployeeService {
             int employeeCounter = 0;
 
             for (Employee employee : allEmployees) {
-                if (employee.getRegisteredAt().substring(0, 10).equals(date.substring(0, 10))) {
+                if (employee.getCreateAt().substring(0, 10).equals(date.substring(0, 10))) {
                     employeeCounter++;
                 }
             }
@@ -116,9 +115,9 @@ public class EmployeeServiceImp implements EmployeeService {
 
     }
 
-    Long getTimestamp(String registeredAt) {
+    Long getTimestamp(String createAt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(registeredAt, formatter);
+        LocalDateTime localDateTime = LocalDateTime.parse(createAt, formatter);
 
 
         // Extract individual components

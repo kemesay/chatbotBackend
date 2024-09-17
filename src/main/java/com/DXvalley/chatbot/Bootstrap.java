@@ -22,9 +22,9 @@ public class Bootstrap {
     Role marketAnalyst = new Role("Market Analyst", "Works on analysis of market");
     Role Employee = new Role("employee", "officer");
     Role TourOperator = new Role("Tour Operator", "Create Package");
-    Office adminOffice = new Office("Around Bole", "Visit Oromia Info Centre", 38.78404357187282F, 8.990634168076502F,"Head Office");
+    Office adminOffice = new Office("Around Bole", "2024-06-27", "2024-06-27","Visit Ethiopia Info Centre", 38.78404357187282F, 8.990634168076502F,"Head Office");
     Address address = new Address("ethiopia", "Addis Ababa", "Bole Noh Real State", "03", "457");
-    Users user = new Users("@mesay", "0911709546", "@mesay123","Mesay Kebede Lemma", "fikirawaldi7@gmail.com", true, "MALE", "1997-11-27", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU", "https://pbs.twimg.com/media/FmQODdMXEAEvUao?format=jpg&name=large", "194.12.1.200", "2023-31-08", null, 1, 0, false, true);
+    Users user = new Users("@mesay", "2024-06-27", "System Administrator","0911709546", "@mesay123", "Mesay Kebede Lemma","fikirawaldi7@gmail.com", true, "Male", "1997-11-28",  "https://pbs.twimg.com/media/FmQODdMXEAEvUao?format=jpg&name=large","https://pbs.twimg.com/media/FmQODdMXEAEvUao?format=jpg&name=large", null, "2024-06-07", "2024-06-08",05, null, true, true);
 
     Collection<Role> roles = new ArrayList<>();
 

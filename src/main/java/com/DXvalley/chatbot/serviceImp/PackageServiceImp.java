@@ -1,6 +1,5 @@
 package com.DXvalley.chatbot.serviceImp;
 
-import com.DXvalley.chatbot.controllers.tourOpController;
 import com.DXvalley.chatbot.models.*;
 import com.DXvalley.chatbot.repository.DestinationRepository;
 import com.DXvalley.chatbot.repository.TourPackageRepository;
@@ -32,7 +31,8 @@ public class PackageServiceImp implements TourPackageService {
     @Override
     public ResponseEntity<?> registerPackage(TourPackage tourPackage) {
         var package1 = tourPackageRepository.findByPackageName(tourPackage.getPackageName());
-        tourOpController.ResponseMessage responseMessage;
+        ResponseMessage responseMessage;
+        TourOperator tourOperator = new TourOperator();
         if (package1 == null) {
             Date date = new Date();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -48,7 +48,7 @@ public class PackageServiceImp implements TourPackageService {
                 if (isTourOperator) {
                     tourPackage.setPackageType(PackageType.TOUR_OPERATOR_PACKAGE);
 
-                    List<Destination> tourOperatorDestinations = user.getTourOperator().getDestinations();
+                    List<Destination> tourOperatorDestinations = tourOperator.getDestinations();
                     for (Destination tourOpetatordestination : tourOperatorDestinations
                     ) {
                         for (Destination tourDestination :
@@ -75,10 +75,10 @@ public class PackageServiceImp implements TourPackageService {
             }
             tourPackage.setPackageCreator(user);
             tourPackageRepository.save(tourPackage);
-            responseMessage = new tourOpController.ResponseMessage("success", "Package Registered successfully");
+            responseMessage = new ResponseMessage("success", "Package Registered successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } else {
-            responseMessage = new tourOpController.ResponseMessage("fail", "Package register fail");
+            responseMessage = new ResponseMessage("fail", "Package register fail");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
     }
