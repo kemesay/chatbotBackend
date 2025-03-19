@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public interface ConfirmationTokenService {
     ConfirmationToken saveConfirmationToken(Users user, String token, int expirationTimeInMinutes);
 
-    ConfirmationToken getToken(String token,String username);
+    ConfirmationToken getToken(String token,String emial);
 
     void sendConfirmationToken(String contact);
 

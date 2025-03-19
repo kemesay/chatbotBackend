@@ -36,22 +36,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String username;
+        String email;
         String password;
         try {
             String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
             var parser = JsonParserFactory.getJsonParser();
             var loginInfo = parser.parseMap(body);
-            username = (String) loginInfo.get("username");
+            email = (String) loginInfo.get("email");
             password = (String) loginInfo.get("password");
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
             return authenticationManager.authenticate(authenticationToken);
         } catch (JsonParseException jpe) {
 
-            throw new RuntimeException("Username/Email and password are required");
+            throw new RuntimeException("Email and password are required");
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Username/Email and password are required");
+            throw new RuntimeException("Email and password are required");
         }
     }
 

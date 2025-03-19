@@ -2,6 +2,8 @@ package com.DXvalley.chatbot.controllers;
 import com.DXvalley.chatbot.models.Bank;
 import com.DXvalley.chatbot.repository.BankRepository;
 import com.DXvalley.chatbot.service.BankService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +17,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
+@RequestMapping("/bank")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bank")
+@Tag(name = "Bank APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class BankController {
     @Autowired
  final private BankService bankService;

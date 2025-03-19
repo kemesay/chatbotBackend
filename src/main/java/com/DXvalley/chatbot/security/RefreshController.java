@@ -42,13 +42,12 @@ public class RefreshController {
                 Algorithm algorithm = Algorithm.HMAC256(privateKey.getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
-                String username = decodedJWT.getSubject();
+                String email = decodedJWT.getSubject();
                 String access_token;
-                System.out.println("jkjkjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                Users user = userRepository.findByUsername(username);
+                Users user = userRepository.findByEmail(email);
 
                 access_token = JWT.create()
-                        .withSubject(user.getUsername())
+                        .withSubject(user.getEmail())
                         .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toList()))

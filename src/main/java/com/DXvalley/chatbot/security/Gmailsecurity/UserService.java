@@ -13,18 +13,18 @@ public class UserService {
     @Autowired
     private UserRepository repo;
 
-    public void processOAuthPostLogin(String username) {
-        Users existUser = repo.findByUsername(username);
+    public void processOAuthPostLogin(String email) {
+        Users existUser = repo.findByEmail(email);
 
         if (existUser == null) {
             Users newUser = new Users();
-            newUser.setUsername(username);
+            newUser.setEmail(email);
             newUser.setProvider(Provider.GOOGLE);
             newUser.setIsActive(true);
 
             repo.save(newUser);
 
-            System.out.println("Created new user: " + username);
+            System.out.println("Created new user: " + email);
         }
 
     }

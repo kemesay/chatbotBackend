@@ -51,7 +51,7 @@ public class PackageServiceImp implements TourPackageService {
                     List<Destination> tourOperatorDestinations = tourOperator.getDestinations();
                     for (Destination tourOpetatordestination : tourOperatorDestinations
                     ) {
-                        for (Destination tourDestination :
+                         for (Destination tourDestination :
                                 tourPackage.getDestinations()) {
                             if (tourOpetatordestination.getDestinationId().equals(tourDestination.getDestinationId())) {
                                 Destination managedDestination = destinationRepository.findById(tourDestination.getDestinationId()).orElse(null);
@@ -101,8 +101,14 @@ public class PackageServiceImp implements TourPackageService {
             } else if (role.equals("admin")) {
                 String destinationName = user.getDestination().getName();
                 tourPackages.addAll(tourPackageRepository.findTourPackagesAtDestination(destinationName));
-            } else {
+            } else if (role.equals("Tour Operator")) {
 
+                String tourOperatorName = user.getTourOperator().getTourOrgName();
+                tourPackages.addAll(tourPackageRepository.findTourPackagesByTourOperator(tourOperatorName));
+
+            }
+            else {
+                
             }
         }
         return tourPackages;

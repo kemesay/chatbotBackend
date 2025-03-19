@@ -201,4 +201,9 @@ public class EmailService {
                 "<p>If the link above does not work, please copy and paste the URL into your web browser.</p>" +
                 "<p>Thank you!</p></td></tr></tbody></table></div>";
     }
+
+    public void send(String username, String emailBuilderForPasswordReset, String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'send'");
+    }
 }

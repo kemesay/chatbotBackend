@@ -43,7 +43,7 @@ public class Bootstrap {
             log.info("Preloading " + roleRepository.save(Employee));
             log.info("Preloading " + roleRepository.save(admin));
             log.info("Preloading " + userRepository.save(user));
-            log.info("preloading"+roleRepository.save(TourOperator));
+            log.info("preloading " + roleRepository.save(TourOperator));
         };
     }
 }

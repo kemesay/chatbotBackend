@@ -35,10 +35,10 @@ public class HotelServiceImp implements HotelService {
             hotel.setCreateAt(LocalDateTime.now().format(dateTimeFormatter));
             hotel.setDestination(getUser().getDestination());
             hotelRepository.save(hotel);
-            responseMessage = new ResponseMessage("success", "Bank created successfully");
+            responseMessage = new ResponseMessage("success", "Hotel created successfully");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } else {
-            responseMessage = new ResponseMessage("fail", "Hotel's branch already exist");
+            responseMessage = new ResponseMessage("fail", "Hotel already exist");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
 

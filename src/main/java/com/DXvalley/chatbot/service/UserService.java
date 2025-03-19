@@ -13,7 +13,7 @@ public interface UserService {
     ResponseEntity<?> editUsers (Users users);
     ResponseEntity<?> RegisterUsers(Users users);
 
-    ResponseEntity<ApiResponse> forgotPassword(String username);
+    ResponseEntity<ApiResponse> forgotPassword(String email);
     ResponseEntity<ApiResponse> resetPassword(ResetPassword resetPassword);
 
 }

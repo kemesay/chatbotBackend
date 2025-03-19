@@ -29,8 +29,8 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
     private final SmsService smsService;
     private final DateTimeFormatter dateTimeFormatter;
 
-    public ConfirmationToken getToken(String token,String username) {
-        ConfirmationToken confirmationToken= (ConfirmationToken)this.confirmationTokenRepository.findByTokenAndUserUsername(token,username).orElseThrow(() -> {
+    public ConfirmationToken getToken(String token,String email) {
+        ConfirmationToken confirmationToken= (ConfirmationToken)this.confirmationTokenRepository.findByTokenAndUserUsername(token,email).orElseThrow(() -> {
             return new ResourceNotFoundException("Invalid Token");
         });
         ConfirmationToken activeConfirmationToken = this.checkTokenExpiration(token);
@@ -61,21 +61,21 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         String token = UUID.randomUUID().toString();
         String link = "http://10.100.51.60/verify/" + token;
         String var10001 = user.getUsername();
-//        this.emailService.sendEmail(var10001, EmailBuilder.emailBuilderForUserConfirmation(user.getFullName(), link), "Confirm your email");
+    //    this.emailService.sendEmail(var10001, EmailBuilder.emailBuilderForUserConfirmation(user.getFullName(), link), "Confirm your email");
         this.saveConfirmationToken(user, token, 30);
     }
 
     private void sendOtpConfirmation(Users user) {
         String token = String.format("%06d", (new Random()).nextInt(999999));
-        this.smsService.sendOtp(user.getUsername(), token);
+        this.smsService.sendOtp(user.getEmail(), token);
         this.saveConfirmationToken(user, token, 3);
     }
 
     @Transactional(rollbackFor = {Exception.class})
     public ResponseEntity<ApiResponse> confirmToken(String token) {
         ConfirmationToken confirmationToken = this.checkTokenExpiration(token);
-        String username = confirmationToken.getUser().getUsername();
-        Users user = userRepository.findByUsername(username);
+        String email = confirmationToken.getUser().getEmail();
+        Users user = userRepository.findByUsername(email);
 //        user.setIsEnabled(true);
 //        user.setVerified(true);
 //        user.setEditedAt(LocalDateTime.now().format(this.dateTimeFormatter));

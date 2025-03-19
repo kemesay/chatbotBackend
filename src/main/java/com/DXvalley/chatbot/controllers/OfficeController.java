@@ -14,7 +14,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Office APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 @RequestMapping("/office")
 public class OfficeController {
     @Autowired

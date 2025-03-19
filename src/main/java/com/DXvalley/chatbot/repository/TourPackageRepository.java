@@ -18,4 +18,7 @@ public interface TourPackageRepository extends JpaRepository<TourPackage, Long> 
 
     @Query("SELECT p FROM TourPackage p JOIN p.destinations d WHERE d.name = :destinationName")
     List<TourPackage> findTourPackagesAtDestination(String destinationName);
+
+    @Query("SELECT p FROM TourPackage p JOIN p.tourOperator t WHERE t.tourOrgName = :tourOperatorName")
+    List<TourPackage> findTourPackagesByTourOperator(String tourOperatorName);
 }

@@ -21,8 +21,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private final UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        Users user = userRepository.findByEmailOrUsername(usernameOrEmail, usernameOrEmail);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Users user = userRepository.findByEmail(email);
         System.out.println("ttttttttttttttt"+user);
         if (user != null && user.getIsActive()) {
 
@@ -34,6 +34,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                     user.getUsername(), user.getPassword(), authorities
             );
         }
-        throw new UsernameNotFoundException("User '" + usernameOrEmail + "' not found");
+        throw new UsernameNotFoundException("User '" + email + "' not found");
     }
 }

@@ -21,7 +21,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Autowired
     private UserRepository userRepository;
     public void processOAuthPostLogin(String email,  String name) {
-        Optional<Users> existUser = userRepository.findByEmail(email);
+         Users existUser = userRepository.findByEmail(email);
         Users newUser = new Users();
 
         if (existUser == null) {

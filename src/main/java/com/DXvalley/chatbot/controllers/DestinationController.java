@@ -4,8 +4,10 @@ import com.DXvalley.chatbot.models.Destination;
 import com.DXvalley.chatbot.repository.DestinationRepository;
 import com.DXvalley.chatbot.service.DestinationService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Destination APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 @RequestMapping("/destination")
 public class DestinationController {
     @Autowired

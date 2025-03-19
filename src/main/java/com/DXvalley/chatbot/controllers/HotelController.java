@@ -1,10 +1,12 @@
 package com.DXvalley.chatbot.controllers;
-import com.DXvalley.chatbot.models.Bank;
 import com.DXvalley.chatbot.models.Hotel;
 import com.DXvalley.chatbot.repository.HotelRepository;
 import com.DXvalley.chatbot.service.HotelService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Hotel APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 @RequestMapping("/hotel")
 public class HotelController {
     @Autowired

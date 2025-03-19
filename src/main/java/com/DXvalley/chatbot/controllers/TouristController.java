@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -21,8 +20,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Tourist APIs.")
 @RequestMapping("/tourist")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class TouristController {
     @Autowired
     private TouristService touristService;
@@ -158,7 +163,6 @@ public class TouristController {
                     arrayOfAgeRangeCount.add(touristRepository.findByAgeRangeCount(ageRange.getStart(), ageRange.getEnd()));
                 }
             }
-
         });
 
         return arrayOfAgeRangeCount;

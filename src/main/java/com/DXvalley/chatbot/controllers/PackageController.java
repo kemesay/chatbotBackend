@@ -16,8 +16,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Package APIs.")
 @RequestMapping("/tourPackage")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class PackageController {
 
     @Autowired

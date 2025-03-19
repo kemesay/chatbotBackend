@@ -25,9 +25,9 @@ public class UserUtils {
     private SmsService smsService;
 
 
-    public void validateUsername(String username) {
-        if (!this.emailService.isValidEmail(username) && !this.smsService.isValidPhoneNumber(username)) {
-            throw new BadRequestException("Username is neither a valid email nor a valid phone number.");
+    public void validateUsername(String email) {
+        if (!this.emailService.isValidEmail(email) && !this.smsService.isValidPhoneNumber(email)) {
+            throw new BadRequestException("neither a valid email nor a valid phone number.");
         }
     }
 
@@ -41,8 +41,8 @@ public class UserUtils {
         return user;
     }
 
-    public Users utilGetUserByUsername(String username) {
-        Users user = userRepository.findByUsername(username);
+    public Users utilGetUserByUsername(String email) {
+        Users user = userRepository.findByUsername(email);
         System.err.println("user"+ user);
         if (user == null) {
             throw new ResourceNotFoundException("There is no user with this username.");
@@ -55,8 +55,8 @@ public class UserUtils {
         return (Users) userRepository.save(user);
     }
 
-    public void delete(String username) {
-        Users user = utilGetUserByUsername(username);
+    public void delete(String email) {
+        Users user = utilGetUserByUsername(email);
         userRepository.delete(user);
     }
 

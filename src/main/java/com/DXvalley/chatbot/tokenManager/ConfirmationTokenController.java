@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 public class ConfirmationTokenController {
     private final ConfirmationTokenService confirmationTokenService;
 
-    @GetMapping({"/checkOtpExistence/{username}/{otpCode}"})
-    public ResponseEntity<?> getOtpByCode(@PathVariable String otpCode,@PathVariable String username) {
-        ConfirmationToken confirmationToken = this.confirmationTokenService.getToken(otpCode,username);
+    @GetMapping({"/checkOtpExistence/{email}/{otpCode}"})
+    public ResponseEntity<?> getOtpByCode(@PathVariable String otpCode,@PathVariable String email) {
+        ConfirmationToken confirmationToken = this.confirmationTokenService.getToken(otpCode,email);
 
         return ApiResponse.success("valid otp");
     }

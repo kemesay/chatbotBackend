@@ -2,8 +2,11 @@ package com.DXvalley.chatbot.controllers;
 import com.DXvalley.chatbot.models.Feedback;
 import com.DXvalley.chatbot.repository.FeedbackRepository;
 import com.DXvalley.chatbot.service.FeedbackService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,9 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Feedback APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 @RequestMapping("/feedback")
 public class FeedBackController {
     @Autowired

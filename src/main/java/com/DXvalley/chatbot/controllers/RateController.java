@@ -12,11 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Rate APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 @RequestMapping("/api/rate")
 public class RateController {
     @Autowired

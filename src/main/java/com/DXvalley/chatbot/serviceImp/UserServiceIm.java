@@ -1,9 +1,10 @@
 package com.DXvalley.chatbot.serviceImp;
 import com.DXvalley.chatbot.DTO.ResetPassword;
+import com.DXvalley.chatbot.messageManager.email.EmailBuilder;
+import com.DXvalley.chatbot.messageManager.email.EmailServiceImpl;
 import com.DXvalley.chatbot.messageManager.sms.SmsService;
 import com.DXvalley.chatbot.models.Users;
 import com.DXvalley.chatbot.repository.UserRepository;
-import com.DXvalley.chatbot.service.EmailService;
 import com.DXvalley.chatbot.service.UserService;
 import com.DXvalley.chatbot.tokenManager.ConfirmationToken;
 import com.DXvalley.chatbot.tokenManager.ConfirmationTokenRepository;
@@ -21,12 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class UserServiceIm  implements UserService {
 
     @Autowired
-    private EmailService emailService;
+    private EmailServiceImpl emailService;
     @Autowired
     private SmsService smsService;
     @Autowired
@@ -81,23 +83,33 @@ public class UserServiceIm  implements UserService {
             return  new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
     }
+    @SuppressWarnings("rawtypes")
     @Override
-    public ResponseEntity<ApiResponse> forgotPassword(String username) {
-        Users user = userUtils.utilGetUserByUsername(username);
-        System.err.println("user2"+ user);
+    public ResponseEntity<ApiResponse> forgotPassword(String emailOrPhoneNumber) {
+        Users user = userUtils.utilGetUserByUsername(emailOrPhoneNumber);
+        
+        if (user == null) {
+            return ApiResponse.error(HttpStatus.NOT_FOUND, "There is no user with this username.");
+        }
 
         String code;
-        if (emailService.isValidEmail(username)) {
+        if (emailService.isValidEmail(emailOrPhoneNumber)) {
             code = UUID.randomUUID().toString();
-//            String link = "https://chatoromia.org/reset-password/" + username + "/" + code;
-            String link = "http://localhost:3000/reset-password/" + username + "/" + code;
+            // String link = "http://localhost:3000/reset-password/" + emailOrPhoneNumber + "/" + code;
+            String link = "https://ethiosmartride.com/reset-password/" + emailOrPhoneNumber + "/" + code;
 
-//            emailService.send(user.getUsername(), EmailBuilder.emailBuilderForPasswordReset(user.getFullName(), link), "Reset your password");
+
+            CompletableFuture<ApiResponse> emailResponse = emailService.send(
+                    user.getEmail(),
+                EmailBuilder.emailBuilderForPasswordReset(user.getFullName(), link),
+                "Reset your password"
+            );
+
             confirmationTokenService.saveConfirmationToken(user, code, 30);
             return ApiResponse.success("Please check your email");
         } else {
             code = String.format("%06d", (new Random()).nextInt(999999));
-            smsService.sendOtp(username, code);
+            smsService.sendOtp(emailOrPhoneNumber, code);
             confirmationTokenService.saveConfirmationToken(user, code, 3);
             return ApiResponse.success("Please check your phone");
         }
@@ -107,8 +119,8 @@ public class UserServiceIm  implements UserService {
     @Override
     public ResponseEntity<ApiResponse> resetPassword(ResetPassword resetPassword) {
         ConfirmationToken confirmationToken = confirmationTokenService.checkTokenExpiration(resetPassword.getToken());
-        String username = confirmationToken.getUser().getUsername();
-        Users user = userUtils.utilGetUserByUsername(username);
+        String emailOrPhoneNumber = confirmationToken.getUser().getEmail();
+        Users user = userUtils.utilGetUserByUsername(emailOrPhoneNumber);
 
         user.setPassword(passwordEncoder.encode(resetPassword.getPassword()));
         userUtils.saveUser(user);

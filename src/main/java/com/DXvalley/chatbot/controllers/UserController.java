@@ -1,4 +1,5 @@
 package com.DXvalley.chatbot.controllers;
+
 import com.DXvalley.chatbot.DTO.PasswordChangeDTO;
 import com.DXvalley.chatbot.DTO.ResetPassword;
 import com.DXvalley.chatbot.DTO.UserProfileDTO;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Tag(name = "User APIs.")
 @RequestMapping("/api/v1/user")
-//@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class UserController {
     @Autowired
     private final UserRepository userRepository;
@@ -52,10 +53,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     EmailService emailService;
-
     @Autowired
     UserServiceIm userServiceImp;
-
 
     private boolean isSysAdmin() {
         AtomicBoolean hasSysAdmin = new AtomicBoolean(false);
@@ -68,17 +67,17 @@ public class UserController {
         return hasSysAdmin.get();
     }
 
-    private boolean isOwnAccount(String userName) {
+    private boolean isOwnAccount(String email) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return userRepository.findByUsername((String) auth.getPrincipal()).getUsername().equals(userName);
+        return userRepository.findByUsername((String) auth.getPrincipal()).getUsername().equals(email);
     }
 
     @GetMapping("/getUsers")
     List<Users> getUsers() {
         if (isSysAdmin()) {
-            return this.userRepository.findAll(Sort.by("username"));
+            return this.userRepository.findAll(Sort.by("email"));
         }
-        var users = this.userRepository.findAll(Sort.by("username"));
+        var users = this.userRepository.findAll(Sort.by("email"));
         users.removeIf(user -> {
             var containsAdmin = false;
             for (var role : user.getRoles()) {
@@ -110,26 +109,28 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-//    @GetMapping("/oauth2/code/google")
-//    public String handleGoogleCallback(@AuthenticationPrincipal OAuth2User principal) {
-//        // Extract user information from OAuth2User
-//        String email = principal.getAttribute("email");
-//
-//        // Check if the user exists in the database
-//        Optional<Users> optionalUser = userRepository.findByEmail(email);
-//        Users user = optionalUser.orElseGet(() -> {
-//            // If not, create a new user and save to the database
-//            Users newUser = new Users();
-//            newUser.setEmail(email);
-//            // Set other user details...
-//            return userRepository.save(newUser);
-//        });
+    // @GetMapping("/oauth2/code/google")
+    // public String handleGoogleCallback(@AuthenticationPrincipal OAuth2User
+    // principal) {
+    // // Extract user information from OAuth2User
+    // String email = principal.getAttribute("email");
+    //
+    // // Check if the user exists in the database
+    // Optional<Users> optionalUser = userRepository.findByEmail(email);
+    // Users user = optionalUser.orElseGet(() -> {
+    // // If not, create a new user and save to the database
+    // Users newUser = new Users();
+    // newUser.setEmail(email);
+    // // Set other user details...
+    // return userRepository.save(newUser);
+    // });
 
     // Authenticate the user
     // (You may use Spring Security's authentication mechanisms)
 
-//        return "redirect:/dashboard/reports"; // Redirect to the home page after successful login
-//    }
+    // return "redirect:/dashboard/reports"; // Redirect to the home page after
+    // successful login
+    // }
 
     @PostMapping("/createUser")
     public ResponseEntity<createUserResponse> accept(@RequestBody Users tempUser) {
@@ -142,17 +143,21 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName())).collect(Collectors.toList()));
+        tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName()))
+                .collect(Collectors.toList()));
         password = tempUser.getPassword();
-        System.err.println("Destination"+tempUser.getDestination()+"Roles:"+tempUser.getRoles());
+        System.err.println("Destination" + tempUser.getDestination() + "Roles:" + tempUser.getRoles());
         tempUser.setPassword(passwordEncoder.encode(tempUser.getPassword()));
         tempUser.setFullName(tempUser.getFullName());
         tempUser.setCreatedAt(LocalDateTime.now().format(dateTimeFormatter));
-//        System.out.println(tempUser.getUsername() + password);
-        tempUser.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
-        tempUser.setCoverImgUrl("http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
+        // System.out.println(tempUser.getUsername() + password);
+        tempUser.setImageUrl(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
+        tempUser.setCoverImgUrl(
+                "http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
         userRepository.save(tempUser);
-        emailService.sendEmail(tempUser.getEmail(), "user created!", tempUser.getFullName(), "USER_CREATED", tempUser.getUsername(), password);
+        emailService.sendEmail(tempUser.getEmail(), "user created!", tempUser.getFullName(), "USER_CREATED",
+                tempUser.getUsername(), password);
         createUserResponse response = new createUserResponse("success", "user created successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -167,21 +172,24 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName())).collect(Collectors.toList()));
+        tempUser.setRoles(tempUser.getRoles().stream().map(x -> this.roleRepo.findByRoleName(x.getRoleName()))
+                .collect(Collectors.toList()));
         password = tempUser.getPassword();
         tempUser.setPassword(passwordEncoder.encode(tempUser.getPassword()));
         tempUser.setFullName(tempUser.getFullName());
         tempUser.setCreatedAt(LocalDateTime.now().format(dateTimeFormatter));
-//        tempUser.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
-//        tempUser.setCoverImgUrl("http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
+        // tempUser.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgBhcplevwUKGRs1P-Ps8Mwf2wOwnW_R_JIA&usqp=CAU");
+        // tempUser.setCoverImgUrl("http://res.cloudinary.com/do394twgw/image/upload/v1680341073/zpvhxhpk0gpuiuoxvnwe.png");
         userRepository.save(tempUser);
-//        emailService.sendEmail(tempUser.getEmail(), "user created!",tempUser.getFullName(),"USER_CREATED",tempUser.getUsername(),password);
+        // emailService.sendEmail(tempUser.getEmail(), "user
+        // created!",tempUser.getFullName(),"USER_CREATED",tempUser.getUsername(),password);
         createUserResponse response = new createUserResponse("success", "signUp successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/uploadCoverImg/{userNameOrEmail}")
-    public ResponseEntity<?> uploadCoverImg(@RequestParam MultipartFile coverImg, @PathVariable String userNameOrEmail) {
+    public ResponseEntity<?> uploadCoverImg(@RequestParam MultipartFile coverImg,
+            @PathVariable String userNameOrEmail) {
         String coverImgUrl = null;
         createUserResponse response;
         Users user = userRepository.findByEmailOrUsername(userNameOrEmail, userNameOrEmail);
@@ -201,8 +209,9 @@ public class UserController {
         }
     }
 
-        @PutMapping("/uploadProfileImg/{userNameOrEmail}")
-    public ResponseEntity<?> uploadProfileImg(@RequestParam MultipartFile profileImg, @PathVariable String userNameOrEmail) {
+    @PutMapping("/uploadProfileImg/{userNameOrEmail}")
+    public ResponseEntity<?> uploadProfileImg(@RequestParam MultipartFile profileImg,
+            @PathVariable String userNameOrEmail) {
         String profileImgUrl = null;
         createUserResponse response;
         Users user = userRepository.findByEmailOrUsername(userNameOrEmail, userNameOrEmail);
@@ -228,7 +237,6 @@ public class UserController {
         Users user = userRepository.findByEmailOrUsername(userNameOrEmail, userNameOrEmail);
         UserProfileDTO userProfileDTO = new UserProfileDTO();
 
-
         if (user == null) {
             ResponseMessage response;
             response = new ResponseMessage("Unable to get user");
@@ -245,7 +253,8 @@ public class UserController {
     }
 
     @PutMapping("/changePassword/{userNameOrEmail}")
-    public ResponseEntity<pinchangeResponse> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO, @PathVariable String userNameOrEmail) {
+    public ResponseEntity<pinchangeResponse> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO,
+            @PathVariable String userNameOrEmail) {
         Users user = userRepository.findByEmailOrUsername(userNameOrEmail, userNameOrEmail);
         pinchangeResponse response;
         if ((user == null)) {
@@ -259,8 +268,9 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } else {
             user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
-//            System.err.println("uuuuu:"+user.getEmail());
-            emailService.sendEmail(user.getEmail(), "password changed!", user.getFullName(), "PASSWORD_CHANGED", null, null);
+            // System.err.println("uuuuu:"+user.getEmail());
+            emailService.sendEmail(user.getEmail(), "password changed!", user.getFullName(), "PASSWORD_CHANGED", null,
+                    null);
             userRepository.save(user);
             response = new pinchangeResponse("Password Change successfully");
 
@@ -270,7 +280,7 @@ public class UserController {
 
     @PutMapping("/changePin/{phoneNumber}")
     public ResponseEntity<pinchangeResponse> pinChange(@RequestBody Users tempUser,
-                                                       @PathVariable String phoneNumber) {
+            @PathVariable String phoneNumber) {
         Users user = userRepository.findByUsername(phoneNumber);
         // edit(tempUser,user);
         // user.setUsername(tempUser.getUsername());
@@ -285,8 +295,8 @@ public class UserController {
 
     @PutMapping("/{userName}/{usernameChange}")
     public Users manageAccount(@RequestBody UsernamePassword temp,
-                               @PathVariable String userName,
-                               @PathVariable Boolean usernameChange) throws AccessDeniedException {
+            @PathVariable String userName,
+            @PathVariable Boolean usernameChange) throws AccessDeniedException {
         if (isOwnAccount(userName)) {
             Users user = userRepository.findByUsername(userName);
             if (passwordEncoder.matches(temp.getOldPassword(), user.getPassword())) {
@@ -301,15 +311,16 @@ public class UserController {
         } else
             throw new AccessDeniedException("403 Forbidden");
     }
+
     @PutMapping("/{userId}")
     Users editUser(@RequestBody Users users, @PathVariable Long userId) {
         Users existingUser = this.userRepository.findByUserId(userId);
 
         if (existingUser != null) {
             // Update the fields of the existing user
-//            existingUser.setUsername(users.getUsername());
-//            existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
-//            existingUser.setPassword(users.getPassword());
+            // existingUser.setUsername(users.getUsername());
+            // existingUser.setPassword(passwordEncoder.encode(users.getPassword()));
+            // existingUser.setPassword(users.getPassword());
             existingUser.setFullName(users.getFullName());
             existingUser.setEmail(users.getEmail());
             existingUser.setGender(users.getGender());
@@ -360,17 +371,16 @@ public class UserController {
         }
     }
 
-
-    @PostMapping({"/forgotPassword/{username}"})
-    ResponseEntity<ApiResponse> forgotPassword(@PathVariable String username) {
-        return userService.forgotPassword(username);
+    @SuppressWarnings("rawtypes")
+    @PostMapping({ "/forgotPassword/{email}" })
+    ResponseEntity<ApiResponse> forgotPassword(@PathVariable String email) {
+        return userService.forgotPassword(email);
     }
 
-    @PutMapping({"/resetPassword"})
+    @PutMapping({ "/resetPassword" })
     ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPassword resetPassword) {
         return userService.resetPassword(resetPassword);
     }
-
 
     @DeleteMapping("/{userId}")
     void deleteUser(@PathVariable Long userId) {

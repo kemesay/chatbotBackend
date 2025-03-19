@@ -13,8 +13,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Tour Operator APIs.")
 @RequestMapping("/tourOperator")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class tourOpController {
     @Autowired
     private TourOpService tourOpService;

@@ -2,8 +2,11 @@ package com.DXvalley.chatbot.controllers;
 import com.DXvalley.chatbot.models.Employee;
 import com.DXvalley.chatbot.repository.EmployeeRepository;
 import com.DXvalley.chatbot.service.EmployeeService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
+@Tag(name = "Employee APIs.")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 @RequestMapping("/employee")
 public class EmployeeController {
     @Autowired
